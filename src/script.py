@@ -35,6 +35,12 @@ def print_pass(string):
 def print_fail(string):
     print RED + string + END
 
+def fetch_watchlist():
+    try:
+        return open(watchlist).read().split('\n')[:-1]
+    except IOError:
+       print_fail('failed to open watchlist')
+
 # =============================================================================
 # MAIN FUNCTIONS
 # =============================================================================
@@ -70,7 +76,6 @@ def validate():
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
-    global args
     args = parser.parse_args()
     if args.show:
         for name in open(watchlist, 'r'):
@@ -93,15 +98,8 @@ def update():
         time.sleep(args.delay)
 
 
-def fetch_watchlist():
-    try:
-        return open(watchlist, 'r').read().split('\n')[:-1]
-    except IOError:
-       print_fail('failed to open watchlist')
-
-
 def remove_crypto(name): # *** I know it's not most efficient, but it works
-    coins = open(watchlist).read().split('\n')[:-1]
+    coins = fetch_watchlist()
     for coin in coins:
         if coin == name:
             coins.remove(coin)
