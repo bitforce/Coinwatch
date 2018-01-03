@@ -19,6 +19,7 @@ END = '\033[0m'
 watchlist = '.watchlist.txt'
 m = Market()
 args = None
+run = False
 
 # =============================================================================
 # ASSIST FUNCTIONS
@@ -73,9 +74,16 @@ def validate():
             const=True,
             nargs='?',
             type=bool)
+    parser.add_argument('--run',
+            help='runs watch daemon',
+            default=False,
+            const=True,
+            nargs='?',
+            type=bool)
     if len(sys.argv) == 1:
         parser.print_help()
-        sys.exit(1)
+        sys.exit()
+    global args
     args = parser.parse_args()
     if args.show:
         for name in open(watchlist, 'r'):
@@ -95,7 +103,6 @@ def update():
         price = m.coin(crypto)[0]['price_usd']
         symbol = m.coin(crypto)[0]['symbol']
         print symbol + ' ' + price # add a highlight conditional
-        time.sleep(args.delay)
 
 
 def remove_crypto(name): # *** I know it's not most efficient, but it works
@@ -126,10 +133,14 @@ def run():
     if not os.path.isfile(watchlist):
         print_bold('no watchlist found; creating one now')
         open(watchlist, 'w').close()
-    sys.exit(1)
-    while args.cycles > 0:
+    if not args.run:
+        sys.exit()
+    cycles = args.cycles
+    while cycles > 0:
         cycles -= 1
         update()
+        print
+        time.sleep(args.delay)
 
 # =============================================================================
 # RUN
