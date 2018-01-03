@@ -17,9 +17,8 @@ RED = '\033[91m'
 END = '\033[0m'
 
 watchlist = '.watchlist.txt'
-cycles = 0
-delay = 0
 m = Market()
+args = None
 
 # =============================================================================
 # ASSIST FUNCTIONS
@@ -71,6 +70,7 @@ def validate():
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
+    global args
     args = parser.parse_args()
     if args.show:
         for name in open(watchlist, 'r'):
@@ -84,18 +84,13 @@ def validate():
     if args.add is not None:
         for arg in args.add:
             add_crypto(arg)
-    global cycles
-    global delay
-    cycles = args.delay
-    delay = args.delay
-
 
 def update():
     for crypto in fetch_watchlist():
         price = m.coin(crypto)[0]['price_usd']
         symbol = m.coin(crypto)[0]['symbol']
         print symbol + ' ' + price # add a highlight conditional
-        time.sleep(delay)
+        time.sleep(args.delay)
 
 
 def fetch_watchlist():
@@ -130,14 +125,11 @@ def add_crypto(name): # *** method is slow b/c it needs to request server
 
 def run():
     validate()
-    # FIX GLOBAL-LOCAL SCOPE ISSUE
-    print cycles
-    print delay
     if not os.path.isfile(watchlist):
         print_bold('no watchlist found; creating one now')
         open(watchlist, 'w').close()
     sys.exit(1)
-    while cycles > 0:
+    while args.cycles > 0:
         cycles -= 1
         update()
 
