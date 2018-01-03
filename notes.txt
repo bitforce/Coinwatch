@@ -1,0 +1,14 @@
+run : ./watchdog.py -d 10 -c 100 -a bitcoin litecoin rippl
+$> bitcoin added
+$> litecoin currently watched
+$> ripple not found: either non-existent or incorrect api id
+...
+$> OUTPUT OF WATCHDOG
+
+options
+-------
+-d = delay (in seconds)
+-c = cycles (of delay)
+-a = add (coin)
+-r = remove (coin)
+-w = wipe (watchlist)
