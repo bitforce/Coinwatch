@@ -51,10 +51,25 @@ def fetch_watchlist():
 
 def mean(symbol, current_price):
     mean = current_price
+    prices = []
     with open(watchdata, 'r') as f:
-        price = f.read()
-        print price
+        reader = csv.reader(f)
+        for row in reader:
+            if row and row[2] == symbol: # * verify non-empty array
+                prices.append(float(row[1]))
+    if len(prices) > 1:
+        mean = sum(prices)/len(prices)
     return mean
+
+
+def stddev(symbol):
+    dev = 0
+    prices = []
+    with open(watchdata, 'r') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            if row and row[2] == symbol:
+                prices.append(float(row[1]))
 
 # =============================================================================
 # MAIN FUNCTIONS
@@ -128,15 +143,15 @@ def update():
     f = open(watchdata, 'a')
     date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     for crypto in fetch_watchlist():
-        price = m.coin(crypto)[0]['price_usd']
-        symbol = m.coin(crypto)[0]['symbol']
+        price = float(m.coin(crypto)[0]['price_usd']) # * unicode bug
+        symbol = str(m.coin(crypto)[0]['symbol'])
         csv.writer(f).writerow([date, price, symbol])
         if price < mean(symbol, price):
-            print_fail(symbol + ' $' + price)
+            print_fail(symbol + ' $' + str(price))
         elif price > mean(symbol, price):
-            print_pass(symbol + ' $' + price)
+            print_pass(symbol + ' $' + str(price))
         else:
-            print symbol + ' $' + price
+            print symbol + ' $' + str(price)
     f.write('\n')
     f.close()
 
