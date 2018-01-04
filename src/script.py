@@ -3,6 +3,7 @@
 from coinwrap import Market
 import argparse
 import datetime
+import math
 import time
 import csv
 import sys
@@ -70,6 +71,10 @@ def stddev(symbol):
         for row in reader:
             if row and row[2] == symbol:
                 prices.append(float(row[1]))
+    sq = 0
+    for price in prices:
+        sq += math.pow(price - mean(symbol, price), 2)
+    return math.sqrt(sq / len(prices))
 
 # =============================================================================
 # MAIN FUNCTIONS
@@ -146,9 +151,9 @@ def update():
         price = float(m.coin(crypto)[0]['price_usd']) # * unicode bug
         symbol = str(m.coin(crypto)[0]['symbol'])
         csv.writer(f).writerow([date, price, symbol])
-        if price < mean(symbol, price):
+        if price < mean(symbol, price) - stddev(symbol):
             print_fail(symbol + ' $' + str(price))
-        elif price > mean(symbol, price):
+        elif price > mean(symbol, price) + stddev(symbol):
             print_pass(symbol + ' $' + str(price))
         else:
             print symbol + ' $' + str(price)
@@ -187,6 +192,8 @@ def run():
     cycles = args.cycles
     while cycles > 0:
         cycles -= 1
+        print 'CYCLE ' + str((cycles - args.cycles)*-1)
+        print '-----'
         update()
         print
         time.sleep(args.delay)
