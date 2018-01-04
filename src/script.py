@@ -2,7 +2,9 @@
 
 from coinwrap import Market
 import argparse
+import datetime
 import time
+import csv
 import sys
 import os.path
 
@@ -17,6 +19,7 @@ RED = '\033[91m'
 END = '\033[0m'
 
 watchlist = '.watchlist.txt'
+watchdata = '.watchlist.csv'
 m = Market()
 args = None
 run = False
@@ -36,17 +39,34 @@ def print_pass(string):
 def print_fail(string):
     print RED + string + END
 
+def apoptosis(): # self-delete script from local machine, but keep w-list/data
+    sys.exit()
+
 def fetch_watchlist():
     try:
         return open(watchlist).read().split('\n')[:-1]
     except IOError:
        print_fail('failed to open watchlist')
+       sys.exit(1)
+
+def mean(symbol, current_price):
+    mean = current_price
+    with open(watchdata, 'r') as f:
+        price = f.read()
+        print price
+    return mean
 
 # =============================================================================
 # MAIN FUNCTIONS
 # =============================================================================
 
 def validate():
+    if not os.path.isfile(watchlist):
+        print_bold('no watchlist.txt found; creating one now')
+        open(watchlist, 'w').close()
+    if not os.path.isfile(watchdata):
+        print_bold('no watchlist.csv found; creating one now')
+        open(watchdata, 'w').close()
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--delay',
             help='delay of http request; in seconds',
@@ -63,34 +83,37 @@ def validate():
             help='add cryptos to watchlist',
             nargs='+')
     parser.add_argument('-w', '--wipe',
-            help='wipe watchlist clean',
-            default=False,
-            const=True,
-            nargs='?',
-            type=bool)
-    parser.add_argument('-s', '--show',
-            help='prints watchlist contents',
-            default=False,
-            const=True,
-            nargs='?',
-            type=bool)
+            help='wipe watchlist.txt clean',
+            action='store_true')
+    parser.add_argument('-e', '--erase',
+            help='wipe watchlist.csv clean',
+            action='store_true')
+    parser.add_argument('--show-watchlist',
+            help='prints watchlist.txt contents',
+            action='store_true')
+    parser.add_argument('--show-watchdata',
+            help='prints watchlist.csv contents',
+            action='store_true')
     parser.add_argument('--run',
             help='runs watch daemon',
-            default=False,
-            const=True,
-            nargs='?',
-            type=bool)
+            action='store_true')
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit()
     global args
     args = parser.parse_args()
-    if args.show:
+    if args.show_watchlist:
         for name in open(watchlist, 'r'):
-            print name, 
+            print name,
+    if args.show_watchdata:
+        for data in open(watchdata, 'r'):
+            print data,
     if args.wipe:
-        print_warn('wiping watchlist contents')
+        print_warn('wiping watchlist.txt contents')
         open(watchlist, 'w').close()
+    if args.erase:
+        print_warn('wiping watchlist.csv contents')
+        open(watchdata, 'w').close()
     if args.remove is not None:
         for arg in args.remove:
             remove_crypto(arg)
@@ -99,10 +122,23 @@ def validate():
             add_crypto(arg)
 
 def update():
+    if not fetch_watchlist():
+        print_warn('not cryptos in watchlist')
+        sys.exit()
+    f = open(watchdata, 'a')
+    date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     for crypto in fetch_watchlist():
         price = m.coin(crypto)[0]['price_usd']
         symbol = m.coin(crypto)[0]['symbol']
-        print symbol + ' ' + price # add a highlight conditional
+        csv.writer(f).writerow([date, price, symbol])
+        if price < mean(symbol, price):
+            print_fail(symbol + ' $' + price)
+        elif price > mean(symbol, price):
+            print_pass(symbol + ' $' + price)
+        else:
+            print symbol + ' $' + price
+    f.write('\n')
+    f.close()
 
 
 def remove_crypto(name): # *** I know it's not most efficient, but it works
@@ -130,11 +166,9 @@ def add_crypto(name): # *** method is slow b/c it needs to request server
 
 def run():
     validate()
-    if not os.path.isfile(watchlist):
-        print_bold('no watchlist found; creating one now')
-        open(watchlist, 'w').close()
     if not args.run:
         sys.exit()
+    print
     cycles = args.cycles
     while cycles > 0:
         cycles -= 1

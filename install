@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+
+# should install program into bin on Mac or Linux as command cmcrawl and pipe 
+# parameters as input to it
