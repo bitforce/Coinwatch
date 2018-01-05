@@ -28,27 +28,35 @@ run = False
 # =============================================================================
 # ASSIST FUNCTIONS
 # =============================================================================
+
+
 def print_warn(string):
     print YELLOW + string + END
+
 
 def print_bold(string):
     print WHITE + string + END
 
+
 def print_pass(string):
     print GREEN + string + END
+
 
 def print_fail(string):
     print RED + string + END
 
-def apoptosis(): # self-delete script from local machine, but keep w-list/data
+
+def apoptosis():  # self-delete script from local machine, but keep w-list/data
     sys.exit()
+
 
 def fetch_watchlist():
     try:
         return open(watchlist).read().split('\n')[:-1]
     except IOError:
-       print_fail('failed to open watchlist')
-       sys.exit(1)
+        print_fail('failed to open watchlist')
+        sys.exit(1)
+
 
 def mean(symbol, current_price):
     mean = current_price
@@ -56,10 +64,10 @@ def mean(symbol, current_price):
     with open(watchdata, 'r') as f:
         reader = csv.reader(f)
         for row in reader:
-            if row and row[2] == symbol: # * verify non-empty array
+            if row and row[2] == symbol:  # * verify non-empty array
                 prices.append(float(row[1]))
     if len(prices) > 1:
-        mean = sum(prices)/len(prices)
+        mean = sum(prices) / len(prices)
     return mean
 
 
@@ -80,6 +88,7 @@ def stddev(symbol):
 # MAIN FUNCTIONS
 # =============================================================================
 
+
 def validate():
     if not os.path.isfile(watchlist):
         print_bold('no watchlist.txt found; creating one now')
@@ -89,34 +98,34 @@ def validate():
         open(watchdata, 'w').close()
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--delay',
-            help='delay of http request; in seconds',
-            default=60,
-            type=long)
+                        help='delay of http request; in seconds',
+                        default=60,
+                        type=long)
     parser.add_argument('-c', '--cycles',
-            help='total number of http requests',
-            default=100,
-            type=long)
+                        help='total number of http requests',
+                        default=100,
+                        type=long)
     parser.add_argument('-r', '--remove',
-            help='remove cryptos from watchlist',
-            nargs='+')
+                        help='remove cryptos from watchlist',
+                        nargs='+')
     parser.add_argument('-a', '--add',
-            help='add cryptos to watchlist',
-            nargs='+')
+                        help='add cryptos to watchlist',
+                        nargs='+')
     parser.add_argument('-w', '--wipe',
-            help='wipe watchlist.txt clean',
-            action='store_true')
+                        help='wipe watchlist.txt clean',
+                        action='store_true')
     parser.add_argument('-e', '--erase',
-            help='wipe watchlist.csv clean',
-            action='store_true')
+                        help='wipe watchlist.csv clean',
+                        action='store_true')
     parser.add_argument('--show-watchlist',
-            help='prints watchlist.txt contents',
-            action='store_true')
+                        help='prints watchlist.txt contents',
+                        action='store_true')
     parser.add_argument('--show-watchdata',
-            help='prints watchlist.csv contents',
-            action='store_true')
+                        help='prints watchlist.csv contents',
+                        action='store_true')
     parser.add_argument('--run',
-            help='runs watch daemon',
-            action='store_true')
+                        help='runs watch daemon',
+                        action='store_true')
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit()
@@ -141,6 +150,7 @@ def validate():
         for arg in args.add:
             add_crypto(arg)
 
+
 def update():
     if not fetch_watchlist():
         print_warn('not cryptos in watchlist')
@@ -148,7 +158,7 @@ def update():
     f = open(watchdata, 'a')
     date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     for crypto in fetch_watchlist():
-        price = float(m.coin(crypto)[0]['price_usd']) # * unicode bug
+        price = float(m.coin(crypto)[0]['price_usd'])  # * unicode bug
         symbol = str(m.coin(crypto)[0]['symbol'])
         csv.writer(f).writerow([date, price, symbol])
         if price < mean(symbol, price) - stddev(symbol):
@@ -161,7 +171,7 @@ def update():
     f.close()
 
 
-def remove_crypto(name): # *** I know it's not most efficient, but it works
+def remove_crypto(name):  # *** I know it's not most efficient, but it works
     coins = fetch_watchlist()
     for coin in coins:
         if coin == name:
@@ -172,7 +182,7 @@ def remove_crypto(name): # *** I know it's not most efficient, but it works
     f.close()
 
 
-def add_crypto(name): # *** method is slow b/c it needs to request server
+def add_crypto(name):  # *** method is slow b/c it needs to request server
     if type(m.coin(name)) is not list:
         print_bold('{} : coin name non-existent or mispelled'.format(name))
         return
@@ -192,7 +202,7 @@ def run():
     cycles = args.cycles
     while cycles > 0:
         cycles -= 1
-        print 'CYCLE ' + str((cycles - args.cycles)*-1)
+        print 'CYCLE ' + str((cycles - args.cycles) * -1)
         print '-----'
         update()
         print
@@ -201,4 +211,6 @@ def run():
 # =============================================================================
 # RUN
 # =============================================================================
+
+
 run()
