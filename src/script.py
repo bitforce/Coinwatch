@@ -58,7 +58,10 @@ def get_path():
 
 def fetch_watchlist():
     try:
-        return open(watchlist).read().split('\n')[:-1]
+        a = []
+        for e in open(watchlist).read().split('\n')[:-1]:
+            a.append(e.split()[:-1][0])  # becomes a list when you split it, so you take [0]
+        return a
     except IOError:
         print_fail('failed to open watchlist')
         sys.exit(1)
@@ -170,6 +173,9 @@ def validate():
     parser.add_argument('--show-watchdata',
                         help='prints watchlist.csv contents',
                         action='store_true')
+    parser.add_argument('--show-symbols',
+                        help='show watchlist with ticker symbols',
+                        action='store_true')
     parser.add_argument('--show-stddev',
                         help='shows asset\'s standard deviation',
                         nargs='+')
@@ -258,7 +264,7 @@ def remove_crypto(name):  # *** I know it's not most efficient, but it works
             coins.remove(coin)
     f = open(watchlist, 'w')
     for coin in coins:
-        f.write(coin + '\n')
+        f.write(str(coin + ' (' + m.coin(coin)[0]['symbol'] + ')\n'))
     f.close()
 
 
@@ -268,7 +274,7 @@ def add_crypto(name):  # *** method is slow b/c it needs to request server
         return
     f = open(watchlist, 'a')
     if name not in open(watchlist).read():
-        f.write(name + '\n')
+        f.write(str(name + ' (' + m.coin(name)[0]['symbol'] + ')\n'))
     else:
         print_warn(name + ' is already being tracked')
     f.close()
@@ -285,7 +291,7 @@ def run():
         print 'CYCLE ' + str((cycles - args.cycles) * -1)
         print '-----'
         update()
-        print
+        print_bold('\n...\n')
         time.sleep(args.delay)
 
 # =============================================================================

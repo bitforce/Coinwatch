@@ -1,21 +1,19 @@
-bitcoin
-bitcoin-cash
-ethereum
-litecoin
-ripple
-monero
-tron
-funcoin
-Nexus
-Dent
-Storm
-Bytecoin-bcn
-Stellar
-Poet
-Qash
-Ethos
-Kin
-Aeternity
-stratis
-raiden-network-token
-chainlink
+bitcoin (BTC)
+bitcoin-cash (BCH)
+ethereum (ETH)
+litecoin (LTC)
+ripple (XRP)
+monero (XMR)
+tron (TRX)
+funcoin (FUNC)
+bytecoin-bcn (BCN)
+nexus (NXS)
+poet (POE)
+storm (STORM)
+dent (DENT)
+raiden-network-token (RDN)
+qash (QASH)
+ethos (ETHOS)
+kin (KIN)
+stratis (STRAT)
+aeternity (AE)
