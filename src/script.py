@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/local/bin/python2
 
 from coinwrap import Market
 import argparse
@@ -24,6 +24,7 @@ watchdata = '.watchlist.csv'
 m = Market()
 args = None
 run = False
+path = '$HOME'  # READ FROM CONFIG FILE
 
 # =============================================================================
 # ASSIST FUNCTIONS
@@ -46,8 +47,13 @@ def print_fail(string):
     print RED + string + END
 
 
-def apoptosis():  # self-delete script from local machine, but keep w-list/data
-    sys.exit()
+def set_path(newpath):
+    global path
+    path = newpath
+
+
+def get_path():
+    return path
 
 
 def fetch_watchlist():
@@ -58,14 +64,39 @@ def fetch_watchlist():
         sys.exit(1)
 
 
-def mean(symbol, current_price):
-    mean = current_price
+def read_prices(symbol):
     prices = []
     with open(watchdata, 'r') as f:
         reader = csv.reader(f)
         for row in reader:
-            if row and row[2] == symbol:  # * verify non-empty array
+            if row and row[2] == symbol:  # verify non-empty arr
                 prices.append(float(row[1]))
+    if not prices:
+        return [-1]
+    return prices
+
+
+def low(symbol):  # no price parameter b/c not part of for loop, so we use slower method
+    prices = read_prices(symbol)
+    low = prices[-1]  # last element in list -> V pythonic
+    for price in prices:
+        if low > price:
+            low = price
+    return low
+
+
+def high(symbol):
+    prices = read_prices(symbol)
+    high = prices[-1]
+    for price in prices:
+        if high < price:
+            high = price
+    return high
+
+
+def mean(symbol, current_price):  # using price parameter here is more efficient and obvious
+    mean = current_price
+    prices = read_prices(symbol)
     if len(prices) > 1:
         mean = sum(prices) / len(prices)
     return mean
@@ -79,10 +110,20 @@ def stddev(symbol):
         for row in reader:
             if row and row[2] == symbol:
                 prices.append(float(row[1]))
+    if not prices:
+        return 0
     sq = 0
     for price in prices:
         sq += math.pow(price - mean(symbol, price), 2)
     return math.sqrt(sq / len(prices))
+
+
+def sell(symbol, current_price):  # statistically calculated buy price
+    return mean(symbol, current_price) - stddev(symbol)
+
+
+def buy(symbol, current_price):  # statistically calculated buy price
+    return mean(symbol, current_price) + stddev(symbol)
 
 # =============================================================================
 # MAIN FUNCTIONS
@@ -111,6 +152,12 @@ def validate():
     parser.add_argument('-a', '--add',
                         help='add cryptos to watchlist',
                         nargs='+')
+    parser.add_argument('--low',
+                        help='returns lowest price--use ticker symbol',
+                        nargs='+')
+    parser.add_argument('--high',
+                        help='returns lowest price--use ticker symbol',
+                        nargs='+')
     parser.add_argument('-w', '--wipe',
                         help='wipe watchlist.txt clean',
                         action='store_true')
@@ -123,6 +170,14 @@ def validate():
     parser.add_argument('--show-watchdata',
                         help='prints watchlist.csv contents',
                         action='store_true')
+    parser.add_argument('--show-stddev',
+                        help='shows asset\'s standard deviation',
+                        nargs='+')
+    parser.add_argument('--set-path',
+                        help='sets the watchlists\' location path')
+    parser.add_argument('--get-path',
+                        help='sets the watchlists\' location path',
+                        action='store_true')
     parser.add_argument('--run',
                         help='runs watch daemon',
                         action='store_true')
@@ -131,22 +186,47 @@ def validate():
         sys.exit()
     global args
     args = parser.parse_args()
+    if args.low:
+        for arg in args.low:
+            arg = arg.upper()
+            if low(arg) < 0:
+                print_fail(arg + ' : no pricing data to be read')
+                continue
+            print arg + ' : ' + str(low(arg))
+    if args.high:
+        for arg in args.high:
+            arg = arg.upper()
+            if high(arg) < 0:
+                print_fail(arg + ' : no pricing data to be read')
+                continue
+            print arg + ' : ' + str(high(arg))
+    # ----------------------------------------
+
+    # ----------------------------------------
+    if args.set_path:  # MAYBE USE A CONFIG FILE?
+        set_path(args.set_path)  # FIGURE OUT WAY TO SET PATH SO THAT EVEN AFTER PROGRAM RUNS
+    if args.get_path:
+        print get_path()
     if args.show_watchlist:
         for name in open(watchlist, 'r'):
             print name,
     if args.show_watchdata:
         for data in open(watchdata, 'r'):
             print data,
+    if args.show_stddev:
+        for dev in args.show_stddev:
+            if stddev(dev) != 0:
+                print str(stddev(dev))
     if args.wipe:
         print_warn('wiping watchlist.txt contents')
         open(watchlist, 'w').close()
     if args.erase:
         print_warn('wiping watchlist.csv contents')
         open(watchdata, 'w').close()
-    if args.remove is not None:
+    if args.remove:
         for arg in args.remove:
             remove_crypto(arg)
-    if args.add is not None:
+    if args.add:
         for arg in args.add:
             add_crypto(arg)
 
@@ -161,9 +241,9 @@ def update():
         price = float(m.coin(crypto)[0]['price_usd'])  # * unicode bug
         symbol = str(m.coin(crypto)[0]['symbol'])
         csv.writer(f).writerow([date, price, symbol])
-        if price < mean(symbol, price) - stddev(symbol):
+        if price < sell(symbol, price):
             print_fail(symbol + ' $' + str(price))
-        elif price > mean(symbol, price) + stddev(symbol):
+        elif price > buy(symbol, price):
             print_pass(symbol + ' $' + str(price))
         else:
             print symbol + ' $' + str(price)

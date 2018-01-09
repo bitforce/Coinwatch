@@ -1,4 +1,11 @@
 #!/usr/bin/bash
 
 # should install program into bin on Mac or Linux as command cmcrawl and pipe 
-# parameters as input to it
+# parameters as input to it and should maybe have GUI
+
+# in install script test for python on /usr/bin:/usr/local/bin and whereever 
+# else a py install may be on Mac, Linux, Windows, then write that location 
+# to the tope of the script.py file with shebang.
+
+# use ./script --set-path to set path based on operating system (essentially 
+# $HOME or $home is Linux) and use --get-path to reveal location of watchlists
