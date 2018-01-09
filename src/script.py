@@ -121,6 +121,25 @@ def stddev(symbol):
     return math.sqrt(sq / len(prices))
 
 
+def percent_change(data):
+    if len(data) > 4 or len(data) < 2:
+        print_fail('must specify at least one asset and a combination of the following: ' +
+                   '1 24 7')
+        return
+    if type(m.coin(data[0])) is not list:
+        print_fail('{} : coin name non-existent or mispelled'.format(data[0]))
+        return
+    times = ['1', '24', '7']
+    for d in data[1:]:
+        if d in times:
+            if d == times[0]:
+                print m.coin(data[0])[0]['percent_change_1h'] + '%'
+            elif d == times[1]:
+                print m.coin(data[0])[0]['percent_change_24h'] + '%'
+            elif d == times[2]:
+                print m.coin(data[0])[0]['percent_change_7d'] + '%'
+
+
 def sell(symbol, current_price):  # statistically calculated buy price
     return mean(symbol, current_price) - stddev(symbol)
 
@@ -141,6 +160,9 @@ def validate():
         print_bold('no watchlist.csv found; creating one now')
         open(watchdata, 'w').close()
     parser = argparse.ArgumentParser()
+    parser.add_argument('-p', '--percent-change',
+                        help='find out percent change of coin',
+                        nargs='+')
     parser.add_argument('-d', '--delay',
                         help='delay of http request; in seconds',
                         default=60,
@@ -223,6 +245,8 @@ def validate():
         for dev in args.show_stddev:
             if stddev(dev) != 0:
                 print str(stddev(dev))
+    if args.percent_change:
+        percent_change(args.percent_change)
     if args.wipe:
         print_warn('wiping watchlist.txt contents')
         open(watchlist, 'w').close()
