@@ -1,4 +1,8 @@
+# if linux, do this
 #!/usr/bin/bash
+# elif mac
+#!/usr/local/bin/bash
+# echo not implemented for this OS
 
 # should install program into bin on Mac or Linux as command cmcrawl and pipe 
 # parameters as input to it and should maybe have GUI

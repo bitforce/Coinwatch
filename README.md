@@ -45,7 +45,22 @@ TODO
 - use low market caps for high volatility gains, something with a $B+ market cap will 
  only move up slowly compared to others
 - find way to look up all historical data and perform a --backup
+- let's do normal run is relative mean/avg of accrued pricing data since scrape, and the
+ --last option says how much price/percent went up since last look/scrape
  
+use beautiful soup and scrape coinmarketcap for data, you'll need to dynamically
+change the preset, but the normal for
+https://coinmarketcap.com/currencies/COINNAME/historical-data/
+is 30 days
+
+if you get all-time data, you can then use it to find out ICO date and choose
+any interval you want
+
+you can even create loading bar by finding out how many elements are on the page and
+then counting them as you scrape
+
+import all the data you are trying to backfill into backfill.csv since watchdata.csv is
+a relevant historical tracker
 
 License
 ---
