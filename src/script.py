@@ -1,7 +1,10 @@
 #!/usr/local/bin/python2
 
-from coinwrap import Market
+from backfill import backfill
+from helper import *
 from stats import *
+
+from coinwrap import Market
 
 import argparse
 import datetime
@@ -15,38 +18,16 @@ import os.path
 # =============================================================================
 # GLOBAL VARIABLES
 # =============================================================================
-YELLOW = '\033[93m'
-GREEN = '\033[92m'
-WHITE = '\033[1m'
-RED = '\033[91m'
-END = '\033[0m'
-
-watchlist = '.watchlist.txt'
-watchdata = '.watchlist.csv'
 m = Market()
 args = None
 run = False
 path = '$HOME'  # READ FROM CONFIG FILE
+interval = 0
 
 
 # =============================================================================
 # ASSIST FUNCTIONS
 # =============================================================================
-def print_warn(string):
-    print YELLOW + string + END
-
-
-def print_bold(string):
-    print WHITE + string + END
-
-
-def print_pass(string):
-    print GREEN + string + END
-
-
-def print_fail(string):
-    print RED + string + END
-
 
 def set_path(newpath):
     global path
@@ -57,21 +38,13 @@ def get_path():
     return path
 
 
-def fetch_watchlist():
-    try:
-        a = []
-        for e in open(watchlist).read().split('\n')[:-1]:
-            a.append(e.split()[:-1][0])  # becomes a list when you split it, so you take [0]
-        return a
-    except IOError:
-        print_fail('failed to open watchlist')
-        sys.exit(1)
-
-
 # =============================================================================
 # MAIN FUNCTIONS
 # =============================================================================
 def validate():
+    if not os.path.isdir('.watchdir'):
+        print_bold('no watch directory found; creating one now')
+        os.makedirs('.watchdir')
     if not os.path.isfile(watchlist):
         print_bold('no watchlist.txt found; creating one now')
         open(watchlist, 'w').close()
@@ -81,6 +54,9 @@ def validate():
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--percent-change',
                         help='find out percent change of coin',
+                        nargs='+')
+    parser.add_argument('-i', '--interval',
+                        help='set interval for backfill and stat analysis',
                         nargs='+')
     parser.add_argument('-d', '--delay',
                         help='delay of http request; in seconds',
@@ -122,6 +98,9 @@ def validate():
     parser.add_argument('--get-path',
                         help='sets the watchlists\' location path',
                         action='store_true')
+    parser.add_argument('-b', '--backfill',
+                        help='backfills all known historical data of the currency',
+                        action='store_true')
     parser.add_argument('--run',
                         help='runs watch daemon',
                         action='store_true')
@@ -148,6 +127,8 @@ def validate():
         set_path(args.set_path)  # FIGURE OUT WAY TO SET PATH SO THAT EVEN AFTER PROGRAM RUNS
     if args.get_path:
         print get_path()
+    if args.backfill:
+        backfill(interval)
     if args.show_watchlist:
         for name in open(watchlist, 'r'):
             print name,

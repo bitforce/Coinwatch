@@ -39,14 +39,14 @@ TODO
  via commands like this: ./script.py -c 10000 -d 45 --preset
 - the program should attempt to read from the config file first if preset commands aren't 
  in place
-- create apoptosis script as part of ./installation -> scramble code so it's unreadable
 - create time intervals for mean() and stddev() calculator: make it so that you can put 
  any time period in place (10m, 1h, 3d , 2w, 1M, 5Y) <- 1m is finest granularity, and 
 - use low market caps for high volatility gains, something with a $B+ market cap will 
  only move up slowly compared to others
-- find way to look up all historical data and perform a --backup
+- find way perform a --backup
 - let's do normal run is relative mean/avg of accrued pricing data since scrape, and the
  --last option says how much price/percent went up since last look/scrape
+- create hidden watchdir containing watchlist, watchdata, and history > how to create dir in py
  
 use beautiful soup and scrape coinmarketcap for data, you'll need to dynamically
 change the preset, but the normal for

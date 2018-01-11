@@ -1,11 +1,7 @@
+from helper import watchdata
+
 import math
 import csv
-
-
-# =============================================================================
-# ASSIST FUNCTIONS
-# =============================================================================
-watchdata = '.watchlist.csv'  # if you don't use it more than twice, delete it
 
 
 # =============================================================================
@@ -35,7 +31,7 @@ def low(symbol):  # no price parameter b/c not part of for loop, so we use slowe
     return low
 
 
-def high(symbol):
+def high(symbol):  # add an interval parameter, but accept daily low as default
     prices = read_prices(symbol)
     high = prices[-1]
     for price in prices:
