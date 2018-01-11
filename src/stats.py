@@ -83,6 +83,9 @@ def percent_change(data):
                 print 'this week : ' + m.coin(data[0])[0]['percent_change_7d'] + '%'
 
 
+# =============================================================================
+# RESULT FUNCTIONS
+# =============================================================================
 def sell(symbol, current_price):  # statistically calculated buy price
     return mean(symbol, current_price) - stddev(symbol)
 

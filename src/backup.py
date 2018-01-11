@@ -1,1 +1,5 @@
-# backs up watchlist and watchdata as touple files into cloud
+from helper import print_bold
+
+
+def backup():
+    print_bold('backing up watch-directory to cloud...')

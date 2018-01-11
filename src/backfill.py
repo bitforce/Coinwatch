@@ -1,5 +1,7 @@
 from helper import fetch_watchlist
+from helper import print_bold
 from helper import print_pass
+from helper import watchhist
 
 from bs4 import BeautifulSoup
 
@@ -15,29 +17,33 @@ def pull_data():  # maybe add a loader to let user know how long this would take
     # amount of time that data has been filled for on the current currencies
     linkp1 = 'https://coinmarketcap.com/currencies/'
     linkp2 = '/historical-data/?start=20130428&end=20180110'
-    data = []
+    data = []  # list of dictionaries
     for coin in fetch_watchlist():  # add interval property and scheduler param
         url = linkp1 + coin + linkp2
         soup = BeautifulSoup(requests.get(url).text, 'lxml')
-        columns = soup.find("thead").find('tr').find_all('th')
-        rows = soup.find("tbody").find_all('tr')
-        grid_data = []
+        columns = soup.find("thead").find('tr').find_all('th')  # used to match row[][]
+        col_data = []
         for column in columns:
-            row_data = []
-            for row in rows:
-                row_data.append(str(row.text))
-            grid_data.append({str(column.text): row_data})
-        data.append(grid_data)
-        print_pass(coin.upper() + ' backfill complete')
+            col_data.append(str(column.text))
+        rows = soup.find("tbody").find_all('tr')
+        row_data = []
+        for row in rows:
+            r_data = []
+            for r in row.find_all('td'):
+                r_data.append(str(r.text))
+            row_data.append(r_data)
+        data.append({coin: row_data})  # a list of dicionaries  {crypto: list}
+        data.append(col_data)  # used to let us know how to sort the cateogies
+        print_pass('{:20} {}'.format(coin.upper(), ' backfill complete'))
     return data
 
 
-def export_data(data):
+def export_data():
     data = pull_data()
     if not data:
         print_fail('no data available to export')
-    with open(watchhist) as f:
-        f.write(data)  # think on how you would like to organize this
+    with open(watchhist, 'a') as f:  # write specifically to csv
+        f.write(str(data))  # think on how you would like to organize this
 
 
 def backfill():

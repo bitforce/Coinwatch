@@ -1,6 +1,7 @@
 #!/usr/local/bin/python2
 
 from backfill import backfill
+from backup import backup
 from helper import *
 from stats import *
 
@@ -128,7 +129,7 @@ def validate():
     if args.get_path:
         print get_path()
     if args.backfill:
-        backfill(interval)
+        backfill()
     if args.show_watchlist:
         for name in open(watchlist, 'r'):
             print name,
