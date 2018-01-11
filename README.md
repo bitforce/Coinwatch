@@ -62,6 +62,12 @@ then counting them as you scrape
 import all the data you are trying to backfill into backfill.csv since watchdata.csv is
 a relevant historical tracker
 
+**UPDATE**
+> scrape top 200 coins from cmc and sort them yourself, repeat the scrape based on intervals 
+> provided by the user and track which one's fall and stay consistently within the top 100
+> append the #markets id to the url to find out if the coins traversing the ranks are 
+> on exchanges you use
+
 License
 ---
 Licensed under the WTFPL - see [LICENSE](./doc/LICENSE) for explicit details.

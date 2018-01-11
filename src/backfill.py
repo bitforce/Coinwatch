@@ -6,6 +6,7 @@ from helper import watchhist
 from bs4 import BeautifulSoup
 
 import requests
+import csv
 
 
 def timelapse():  # verifies whether there exists missing data due to time lapsed
@@ -33,7 +34,7 @@ def pull_data():  # maybe add a loader to let user know how long this would take
                 r_data.append(str(r.text))
             row_data.append(r_data)
         data.append({coin: row_data})  # a list of dicionaries  {crypto: list}
-        data.append(col_data)  # used to let us know how to sort the cateogies
+        # append col_data so we know how to match
         print_pass('{:20} {}'.format(coin.upper(), ' backfill complete'))
     return data
 
