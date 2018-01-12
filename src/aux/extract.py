@@ -3,7 +3,7 @@ from parser import scrape_market_caps
 from parser import scrape_exchanges
 
 
-top = 100  # import this and set it from the backfill.py file
+top = 100  # import this and set it from the backfill.py file / do I make it global?
 
 
 # ------------------------------------------------------------------------------
@@ -24,6 +24,10 @@ def extract_main_page_rows():
     return rows  # turn 2D list into 1D
 
 
+def column(category):  # remember to use string.lower()
+    return 0  # match column from scrape to category, return correct index number
+
+
 # ------------------------------------------------------------------------------
 # EXTRACT MAIN PAGE DATA
 # ------------------------------------------------------------------------------
@@ -33,35 +37,35 @@ def extract_main_page_header():
 
 def extract_main_page_number(coin):
     # THE NUMBER SHOULD COME WHATEVER THE COLUMN DICTIONARY RETURNS
-    return extract_main_page_rows()[0]
+    return extract_main_page_rows()[column('#')]
 
 
 def extract_main_page_name(coin):
-    return
+    return extract_main_page_rows()[column('name')]
 
 
 def extract_main_page_market_cap(coin):
-    return
+    return extract_main_page_rows()[column('market cap')]
 
 
 def extract_main_page_price(coin):
-    return
+    return extract_main_page_rows()[column('price')]
 
 
 def extract_main_page_24h_volume(coin):
-    return
+    return extract_main_page_rows()[column('volume (24h)')]
 
 
 def extract_main_page_circulating_supply(coin):
-    return
+    return extract_main_page_rows()[column('circulating supply')]
 
 
 def extract_main_page_24h_change(coin):
-    return
+    return extract_main_page_rows()[column('change (24h)')]
 
 
 def extract_main_page_price_graph(coin):
-    return
+    return extract_main_page_rows()[column('price graph (7d)')]
 
 
 # ------------------------------------------------------------------------------
