@@ -1,6 +1,7 @@
 from parser import scrape_historical_data
 from parser import scrape_market_caps
 from parser import scrape_exchanges
+from parser import scrape_cols
 
 
 top = 100  # import this and set it from the backfill.py file / do I make it global?
@@ -25,6 +26,9 @@ def extract_main_page_rows():
 
 
 def column(category):  # remember to use string.lower()
+    # dictionary {column index : id}
+    # we get the column index by associating the scraped column header list with it's own
+    # indexes and elements --> use scrape_cols()
     return 0  # match column from scrape to category, return correct index number
 
 
