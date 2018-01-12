@@ -15,7 +15,7 @@ cd Coinwatch/
 
 Usage
 ---
-see `./script.py --help`
+see `cryptocast --help`
 
 Note
 ---
@@ -33,8 +33,14 @@ measure this.
 When using the --high/low, enter the coin's ticker symbol, not the name
 
 
+COINMARKETCAP does not have a complete historical backup of price-action for all currencies; 
+however, they do have market volume tracker, which if the coins weren't trading at a certain 
+point, the return character is '-'; therefore, indicating no real reason to track price-action
+
+
 TODO
 ---
+- INSTALL FILE SHOULD INSTALL `cryptocast` AND THEN BIN/\* AS IS OR AS AN EGG -> PYC = SCRAMBLED
 - create a _.coinwatch.conf_ file if it doesn't exist and be able to set permanent configs
  via commands like this: ./script.py -c 10000 -d 45 --preset
 - the program should attempt to read from the config file first if preset commands aren't 
