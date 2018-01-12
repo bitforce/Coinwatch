@@ -1,11 +1,12 @@
 #!/usr/local/bin/python2
-
-from backfill import backfill
-from backup import backup
-from helper import *
-from stats import *
+# -*- coding: utf-8 -*-
 
 from coinwrap import Market
+
+from core.backfill import *
+from core.backup import *
+from core.stats import *
+from aux.generic import *
 
 import argparse
 import datetime
@@ -99,9 +100,6 @@ def validate():
     parser.add_argument('--get-path',
                         help='sets the watchlists\' location path',
                         action='store_true')
-    parser.add_argument('-b', '--backfill',
-                        help='backfills all known historical data of the currency',
-                        action='store_true')
     parser.add_argument('--run',
                         help='runs watch daemon',
                         action='store_true')
@@ -128,8 +126,6 @@ def validate():
         set_path(args.set_path)  # FIGURE OUT WAY TO SET PATH SO THAT EVEN AFTER PROGRAM RUNS
     if args.get_path:
         print get_path()
-    if args.backfill:
-        backfill()
     if args.show_watchlist:
         for name in open(watchlist, 'r'):
             print name,
@@ -156,10 +152,12 @@ def validate():
             add_crypto(arg)
 
 
-def update():
+def update():  # this should automatically check to see if everything is backfilled
     if not fetch_watchlist():
         print_warn('not cryptos in watchlist')
         sys.exit()
+    if not backfilled():
+        backfill()
     f = open(watchdata, 'a')
     date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     for crypto in fetch_watchlist():

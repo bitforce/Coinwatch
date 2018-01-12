@@ -1,4 +1,4 @@
-from helper import watchdata
+from aux.generic import watchdata
 
 import math
 import csv

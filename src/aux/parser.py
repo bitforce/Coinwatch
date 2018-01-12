@@ -1,19 +1,12 @@
-from helper import fetch_watchlist
-from helper import print_bold
-from helper import print_pass
-from helper import watchhist
-
 from bs4 import BeautifulSoup
 
+from generic import fetch_watchlist
+from generic import print_pass
+
 import requests
-import csv
 
 
-def timelapse():  # verifies whether there exists missing data due to time lapsed
-    print
-
-
-def pull_data():  # maybe add a loader to let user know how long this would take
+def pull_historical():  # maybe add a loader to let user know how long this would take
     # actually, this process should be automatic, where the interval is just the missing
     # amount of time that data has been filled for on the current currencies
     linkp1 = 'https://coinmarketcap.com/currencies/'
@@ -36,22 +29,15 @@ def pull_data():  # maybe add a loader to let user know how long this would take
         data.append({coin: row_data})  # a list of dicionaries  {crypto: list}
         # append col_data so we know how to match
         print_pass('{:20} {}'.format(coin.upper(), ' backfill complete'))
+    print
     return data
 
 
-def export_data():
-    data = pull_data()
-    if not data:
-        print_fail('no data available to export')
-    with open(watchhist, 'a') as f:  # write specifically to csv
-        f.write(str(data))  # think on how you would like to organize this
+def pull_market_caps(top):  # gather top N currencies
+    # if the user enters 50, get top 100 and only return 50
+    # if user enters 200, get top 200 currencies and return them
+    print
 
 
-def backfill():
-    print_bold('backfilling data...')
-    export_data()
-
-# use time import to compare current date to data last scraped and then perform a function
-# to only scrape data from the page that's necessary (up to that limit); otherwise, we'd
-# be performing whole scrapes for nothing --> this can also be improved to be a daily
-# crontab function that pre-fills the data for you
+def pull_markets(coin):
+    print

@@ -1,4 +1,4 @@
-from helper import print_bold
+from aux.generic import print_bold
 
 
 def backup():
