@@ -56,7 +56,7 @@ def scrape_market_caps(page):  # returns rows scraped from top X coins url
     return extract_rows(BeautifulSoup(requests.get(url + page).text, 'lxml'))
 
 
-def scrape_historical_data(coin):
+def scrape_historical_data(coin):  # what should this return? the formatting should be elsewhere
     linkp1 = url + 'currencies/'
     linkp2 = '/historical-data/?start=20130428&end=20180110'
     data = []
