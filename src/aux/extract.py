@@ -26,11 +26,9 @@ def extract_main(top):
     else:
         rows = []
         for page in range(0, top / 100 + 1):
-            rows.append(scrape_market_caps(str(page + 1)))  # potential bug
-    print len(rows)
-    rows = [item in sublist for i in rows]
-    print len(rows)
-    return rows
+            rows.append(scrape_market_caps(str(page + 1))[0])
+    rows = strip([r for row in rows for r in row])
+    return
 
 
 def extract_historical(coin, scope):
