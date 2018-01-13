@@ -26,8 +26,9 @@ def extract_main(top):
     else:
         rows = []
         for page in range(0, top / 100 + 1):
-            print 'hello'
             rows.append(scrape_market_caps(str(page + 1)))  # potential bug
+    print len(rows)
+    rows = [item in sublist for i in rows]
     print len(rows)
     return rows
 
