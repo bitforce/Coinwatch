@@ -2,19 +2,19 @@ from aux.generic import fetch_watchlist
 from aux.generic import print_bold
 from aux.generic import print_pass
 from aux.generic import watchhist
-from aux.parser import extract_historical_data_rows
+from aux.extract import *
 
 import csv
 
 
-def backfill():
+def backfill(scope):
     # SHOULD ONLY BACKFILL MISSING DATA TO CURRENT
     print_bold('backfilling data...')
-    data = extract_historical_data_rows()
-    if not data:
-        print_fail('no data available to export')
-    with open(watchhist, 'a') as f:  # write specifically to csv
-        f.write(str(data))  # think on how you would like to organize this
+    backfill = []
+    for coin in fetch_watchlist():
+        backfill.append({coin: extract_historical(coin, scope)})
+    # write backfill to csv
+    return
 
 
 def backfilled():  # checks to see if current data is up to date

@@ -4,15 +4,19 @@ from generic import fetch_watchlist
 from generic import print_pass
 
 import requests
+import datetime
 
 
 url = 'https://coinmarketcap.com/'
 
 
-def scrape_cols(soup):  # UNUSED?
+# ------------------------------------------------------------------------------
+# ASSIST FUNCTIONS
+# ------------------------------------------------------------------------------
+def scrape_cols(soup):
     cols = []
     for column in soup.find("thead").find('tr').find_all('th'):
-        col.append(str(column.text))
+        cols.append(str(column.text))
     return cols
 
 
@@ -28,22 +32,41 @@ def scrape_rows(soup):
     # still get the text as done above
 
 
-# SO WE ARE CLEAR, THERE ARE ONLY 3 MAIN THINGS TO SCRAPE MAIN PAGE, #MARKETS, AND HISTORICAL
+def today():
+    now = datetime.datetime.now()
+    month = str(now.month)
+    if len(month) == 1:
+        month = '0' + month
+    return str(now.year) + month + str(now.day)
+
+
+# ------------------------------------------------------------------------------
+# MAIN FUNCTIONS
+# ------------------------------------------------------------------------------
 def scrape_exchanges(coin):
     url = url + coin + '/#markets'
-    return scrape_rows(BeautifulSoup(requests.get(url).text, 'lxml'))
+    rows = scrape_rows(BeautifulSoup(requests.get(url).text, 'lxml'))
+    cols = scrape_cols(BeautifulSoup(requests.get(url).text, 'lxml'))
+    return [rows, cols]
 
 
 def scrape_market_caps():
-    return scrape_rows(BeautifulSoup(requests.get(url).text, 'lxml'))
+    rows = scrape_rows(BeautifulSoup(requests.get(url).text, 'lxml'))
+    cols = scrape_cols(BeautifulSoup(requests.get(url).text, 'lxml'))
+    return [rows, cols]
 
 
 def scrape_market_caps(page):
-    return scrape_rows(BeautifulSoup(requests.get(url + page).text, 'lxml'))
+    rows = scrape_rows(BeautifulSoup(requests.get(url + page).text, 'lxml'))
+    cols = scrape_cols(BeautifulSoup(requests.get(url + page).text, 'lxml'))
+    return [rows, cols]
 
 
 def scrape_historical_data(coin, scope):
     if scope is '':
-        scope = 'start=20130428&end=20180112'
-    url = url + 'currencies/' + coin + '/historical-data/?' + scope
-    return scrape_rows(BeautifulSoup(requests.get(url).text, 'lxml'))
+        scope = 'start=20130428&end=' + today()
+    global url
+    url += 'currencies/' + coin + '/historical-data/?' + scope
+    rows = scrape_rows(BeautifulSoup(requests.get(url).text, 'lxml'))
+    cols = scrape_cols(BeautifulSoup(requests.get(url).text, 'lxml'))
+    return [rows, cols]

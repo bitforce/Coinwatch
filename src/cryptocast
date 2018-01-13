@@ -24,7 +24,7 @@ m = Market()
 args = None
 run = False
 path = '$HOME'  # READ FROM CONFIG FILE
-interval = 0
+interval = ''
 
 
 # =============================================================================
@@ -122,6 +122,8 @@ def validate():
                 print_fail(arg + ' : no pricing data to be read')
                 continue
             print arg + ' : ' + str(high(arg))
+    if args.interval:
+        interval = args.interval
     if args.set_path:  # MAYBE USE A CONFIG FILE?
         set_path(args.set_path)  # FIGURE OUT WAY TO SET PATH SO THAT EVEN AFTER PROGRAM RUNS
     if args.get_path:
@@ -157,7 +159,7 @@ def update():  # this should automatically check to see if everything is backfil
         print_warn('not cryptos in watchlist')
         sys.exit()
     if not backfilled():
-        backfill()
+        backfill(interval)
     f = open(watchdata, 'a')
     date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     for crypto in fetch_watchlist():
