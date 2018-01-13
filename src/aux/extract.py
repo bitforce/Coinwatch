@@ -6,13 +6,12 @@ from parser import scrape_exchanges
 # ------------------------------------------------------------------------------
 # ASSIST FUNCTIONS
 # ------------------------------------------------------------------------------
-def extract(rows, col):
+def extract(rows, cols):
     data = []
     for i in range(0, len(cols)):
         r = []
         for j in range(0, len(rows)):
             r.append(rows[j][i])
-        print r
         data.append({cols[i].lower(): r})
     return data
 
@@ -22,15 +21,15 @@ def extract(rows, col):
 # ------------------------------------------------------------------------------
 def extract_main(top):
     cols = scrape_market_caps()[1]
-    if top / 100 <= 1:
+    if float(top) / 100 <= 1:
         rows = scrape_market_caps()[0]
     else:
-        top = top / 100
-        pages = top if int else int(top) + 1  # potential bug
         rows = []
-        for page in range(0, pages):
+        for page in range(0, top / 100 + 1):
+            print 'hello'
             rows.append(scrape_market_caps(str(page + 1)))  # potential bug
-    return
+    print len(rows)
+    return rows
 
 
 def extract_historical(coin, scope):

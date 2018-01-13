@@ -11,6 +11,7 @@ def backfill(scope):
     # SHOULD ONLY BACKFILL MISSING DATA TO CURRENT
     print_bold('backfilling data...')
     backfill = []
+    extract_main(301)
     for coin in fetch_watchlist():
         backfill.append({coin: extract_historical(coin, scope)})
     # write backfill to csv

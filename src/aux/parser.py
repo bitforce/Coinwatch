@@ -50,15 +50,14 @@ def scrape_exchanges(coin):
     return [rows, cols]
 
 
-def scrape_market_caps():
-    rows = scrape_rows(BeautifulSoup(requests.get(url).text, 'lxml'))
-    cols = scrape_cols(BeautifulSoup(requests.get(url).text, 'lxml'))
-    return [rows, cols]
-
-
-def scrape_market_caps(page):
-    rows = scrape_rows(BeautifulSoup(requests.get(url + page).text, 'lxml'))
-    cols = scrape_cols(BeautifulSoup(requests.get(url + page).text, 'lxml'))
+def scrape_market_caps(*args):
+    if len(args) == 0:
+        rows = scrape_rows(BeautifulSoup(requests.get(url).text, 'lxml'))
+        cols = scrape_cols(BeautifulSoup(requests.get(url).text, 'lxml'))
+        return [rows, cols]
+    print url + args[0]
+    rows = scrape_rows(BeautifulSoup(requests.get(url + args[0]).text, 'lxml'))
+    cols = scrape_cols(BeautifulSoup(requests.get(url + args[0]).text, 'lxml'))
     return [rows, cols]
 
 
