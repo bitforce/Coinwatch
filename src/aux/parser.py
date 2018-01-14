@@ -61,8 +61,10 @@ def scrape_market_caps(*args):
 
 
 def scrape_historical_data(coin, scope):
-    if scope is '':
+    if not scope:
         scope = 'start=20130428&end=' + today()
+    else:
+        scope = 'start=' + scope[0] + '&end=' + scope[1]
     global url
     url += 'currencies/' + coin + '/historical-data/?' + scope
     rows = scrape_rows(BeautifulSoup(requests.get(url).text, 'lxml'))

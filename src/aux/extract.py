@@ -19,21 +19,22 @@ def extract(rows, cols):
 # ------------------------------------------------------------------------------
 # MAIN FUNCTIONS
 # ------------------------------------------------------------------------------
-def extract_main(top):
+def extract_main(*top):
     cols = scrape_market_caps()[1]
-    if float(top) / 100 <= 1:
+    if not top or float(top) / 100 <= 1:
         rows = scrape_market_caps()[0]
     else:
         rows = []
         for page in range(0, top / 100 + 1):
             rows.append(scrape_market_caps(str(page + 1))[0])
     rows = strip([r for row in rows for r in row])
+    # UNFINISHED
     return
 
 
-def extract_historical(coin, scope):
-    rows = scrape_historical_data(coin, scope)[0]
-    cols = scrape_historical_data(coin, scope)[1]
+def extract_historical(coin):
+    rows = scrape_historical_data(coin)[0]
+    cols = scrape_historical_data(coin)[1]
     return extract(rows, cols)
 
 

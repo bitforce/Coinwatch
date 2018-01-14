@@ -4,9 +4,10 @@ WHITE = '\033[1m'
 RED = '\033[91m'
 END = '\033[0m'
 
-watchlist = '.watchdir/watchlist.txt'
-watchdata = '.watchdir/watchlist.csv'
-watchhist = '.watchdir/watchhist.csv'
+backfill = '.watch/backfill.csv'
+exchanges = '.watch/exchanges.txt'
+watchlist = '.watch/watchlist.txt'
+watchdata = '.watch/watchlist.csv'
 
 
 def print_warn(string):
