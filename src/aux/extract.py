@@ -1,6 +1,6 @@
-from parser import scrape_historical_data
-from parser import scrape_market_caps
-from parser import scrape_exchanges
+from scraper import scrape_historical_data
+from scraper import scrape_market_caps
+from scraper import scrape_exchanges
 
 
 # ------------------------------------------------------------------------------

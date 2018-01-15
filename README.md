@@ -32,48 +32,6 @@ measure this.
 
 When using the --high/low, enter the coin's ticker symbol, not the name
 
-
-COINMARKETCAP does not have a complete historical backup of price-action for all currencies; 
-however, they do have market volume tracker, which if the coins weren't trading at a certain 
-point, the return character is '-'; therefore, indicating no real reason to track price-action
-
-
-TODO
----
-- INSTALL FILE SHOULD INSTALL `cryptocast` AND THEN BIN/\* AS IS OR AS AN EGG -> PYC = SCRAMBLED
-- create a _.coinwatch.conf_ file if it doesn't exist and be able to set permanent configs
- via commands like this: ./script.py -c 10000 -d 45 --preset
-- the program should attempt to read from the config file first if preset commands aren't 
- in place
-- create time intervals for mean() and stddev() calculator: make it so that you can put 
- any time period in place (10m, 1h, 3d , 2w, 1M, 5Y) <- 1m is finest granularity, and 
-- use low market caps for high volatility gains, something with a $B+ market cap will 
- only move up slowly compared to others
-- find way perform a --backup
-- let's do normal run is relative mean/avg of accrued pricing data since scrape, and the
- --last option says how much price/percent went up since last look/scrape
-- create hidden watchdir containing watchlist, watchdata, and history > how to create dir in py
- 
-use beautiful soup and scrape coinmarketcap for data, you'll need to dynamically
-change the preset, but the normal for
-https://coinmarketcap.com/currencies/COINNAME/historical-data/
-is 30 days
-
-if you get all-time data, you can then use it to find out ICO date and choose
-any interval you want
-
-you can even create loading bar by finding out how many elements are on the page and
-then counting them as you scrape
-
-import all the data you are trying to backfill into backfill.csv since watchdata.csv is
-a relevant historical tracker
-
-**UPDATE**
-> scrape top 200 coins from cmc and sort them yourself, repeat the scrape based on intervals 
-> provided by the user and track which one's fall and stay consistently within the top 100
-> append the #markets id to the url to find out if the coins traversing the ranks are 
-> on exchanges you use
-
 License
 ---
 Licensed under the WTFPL - see [LICENSE](./doc/LICENSE) for explicit details.

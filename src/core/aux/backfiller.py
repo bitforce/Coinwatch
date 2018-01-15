@@ -2,7 +2,7 @@ from aux.extract import extract_historical
 from aux.generic import fetch_watchlist
 from aux.generic import print_bold
 from aux.generic import print_pass
-from aux.generic import backfill
+from aux.generic import backfills
 
 import csv
 
@@ -11,11 +11,13 @@ def backfill():
     # SHOULD ONLY BACKFILL MISSING DATA TO CURRENT
     # DEAL WITH SCOPE LATER TOO
     print_bold('backfilling data...')
-    with open(backfill, 'a') as f:
+    with open(backfills, 'a') as f:
         for coin in fetch_watchlist():
             f.write(coin)
             for extract in extract_historical(coin):
-                print extract
+                for key in extract:
+                    print extract[key][0] + ' ' + key
+                print '--------'
             f.write('\n')
             print_pass('{:20} {}'.format(coin.upper(), ' backfill complete'))
         f.close()

@@ -3,12 +3,7 @@
 
 from coinwrap import Market
 
-from core.backfiller import backfilled
-from core.backfiller import backfill
-from core.backup import *
-from core.stats import *
-
-from aux.arguments import arguments
+from core.operations import *
 from aux.generic import *
 
 import datetime
@@ -16,7 +11,6 @@ import math
 import time
 import csv
 import sys
-import os.path
 
 
 # =============================================================================
@@ -24,49 +18,110 @@ import os.path
 # =============================================================================
 args = None
 m = Market()
-path = '$HOME'  # READ FROM CONFIG FILE
 
 
 # =============================================================================
 # ASSIST FUNCTIONS
 # =============================================================================
+def capture_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-p', '--percent-change',
+                        help='find out percent change of coin',
+                        nargs='+')
+    parser.add_argument('-d', '--delay',
+                        help='delay of http request; in seconds',
+                        default=60,
+                        type=long)
+    parser.add_argument('-c', '--cycles',
+                        help='total number of http requests',
+                        default=100,
+                        type=long)
+    parser.add_argument('-r', '--remove',
+                        help='remove cryptos from watchlist',
+                        nargs='+')
+    parser.add_argument('-a', '--add',
+                        help='add cryptos to watchlist',
+                        nargs='+')
+    parser.add_argument('--low',
+                        help='returns lowest price--use ticker symbol',
+                        nargs='+')
+    parser.add_argument('--high',
+                        help='returns lowest price--use ticker symbol',
+                        nargs='+')
+    parser.add_argument('--exchange',
+                        help='add exchange(s) that you trade on',
+                        nargs='+')
+    parser.add_argument('-w', '--wipe',
+                        help='wipe watchlist.txt clean',
+                        action='store_true')
+    parser.add_argument('-e', '--erase',
+                        help='wipe watchlist.csv clean',
+                        action='store_true')
+    parser.add_argument('--show-watchlist',
+                        help='prints watchlist.txt contents',
+                        action='store_true')
+    parser.add_argument('--show-stddev',
+                        help='shows asset\'s standard deviation',
+                        nargs='+')
+    parser.add_argument('--set-path',
+                        help='sets the watchlists\' location path')
+    parser.add_argument('--get-path',
+                        help='sets the watchlists\' location path',
+                        action='store_true')
+    parser.add_argument('--run',
+                        help='runs watch daemon',
+                        action='store_true')
+    return parser
 
-def set_path(newpath):
-    global path
-    path = newpath
 
-
-def get_path():
-    return path
-
-
-def file_exists(f, msg):
-    if not os.path.isfile(f):
-        print_bold(msg)
-        open(f, 'w').close()
+def parse():
+    args = args.parse_args()
+    if not args.run:
+        sys.exit()
+    if not fetch_watchlist():
+        print_warn('not cryptos in watchlist')
+        sys.exit()
+    if args.low:
+        show('low', args.low)
+    if args.high:
+        show('high', args.high)
+    if args.set_path:
+        set_path(args.set_path)
+    if args.get_path:
+        print get_path()
+    if args.show_watchlist:
+        show(watchlist)
+    if args.show_stddev:
+        show('delta', args.stddev)
+    if args.percent_change:
+        percent_change(args.percent_change)
+    if args.wipe:
+        print_warn('wiping watchlist.txt contents')
+        open(watchlist, 'w').close()
+    if args.erase:
+        print_warn('wiping watchlist.csv contents')
+        open(watchdata, 'w').close()
+    if args.remove:
+        for arg in args.remove:
+            remove(arg)
+    if args.add:
+        for arg in args.add:
+            add(arg)
 
 
 # =============================================================================
 # MAIN FUNCTIONS
 # =============================================================================
 def validate():
-    if not os.path.isdir('.watch'):
-        print_bold('no watch directory found; creating one now')
-        os.makedirs('.watch')
+    dir_exists('.watch', 'no watch directory found; creating one now')
     file_exists(watchlist, 'no watchlist.txt found; creating one now')
     file_exists(watchdata, 'no watchlist.csv found; creating one now')
     file_exists(exchanges, 'no exchanges.txt found, creating one now')
     global args
-    args = arguments()
-    print args
-    if not args.run:
+    args = capture_args()
+    if len(sys.argv) == 1:
+        args.print_help()
         sys.exit()
-    print
-    if not fetch_watchlist():
-        print_warn('not cryptos in watchlist')
-        sys.exit()
-    if not backfilled():
-        backfill()
 
 
 def update():  # maybe this can be optimized so you don't have to open the file every update
@@ -86,38 +141,17 @@ def update():  # maybe this can be optimized so you don't have to open the file 
     f.close()
 
 
-def remove_crypto(name):  # *** I know it's not most efficient, but it works
-    coins = fetch_watchlist()
-    for coin in coins:
-        if coin == name:
-            coins.remove(coin)
-    f = open(watchlist, 'w')
-    for coin in coins:
-        f.write(str(coin + ' (' + m.coin(coin)[0]['symbol'] + ')\n'))
-    f.close()
-
-
-def add_crypto(name):  # *** method is slow b/c it needs to request server
-    if type(m.coin(name)) is not list:
-        print_bold('{} : coin name non-existent or mispelled'.format(name))
-        return
-    f = open(watchlist, 'a')
-    if name not in open(watchlist).read():
-        f.write(str(name + ' (' + m.coin(name)[0]['symbol'] + ')\n'))
-    else:
-        print_warn(name + ' is already being tracked')
-    f.close()
-
-
 def run():
     validate()
+    parse()
+    backfill()  # should automatically check for missed dates
     cycles = args.cycles
     while cycles > 0:
         cycles -= 1
         print 'CYCLE ' + str((cycles - args.cycles) * -1)
         print '-----'
         update()
-        print_bold('\n...\n')
+        print '\n...\n'
         time.sleep(args.delay)
 
 # =============================================================================
