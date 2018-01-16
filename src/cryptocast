@@ -6,6 +6,7 @@ from coinwrap import Market
 from core.operations import *
 from aux.generic import *
 
+import argparse
 import datetime
 import math
 import time
@@ -17,13 +18,12 @@ import sys
 # GLOBAL VARIABLES
 # =============================================================================
 args = None
-m = Market()
 
 
 # =============================================================================
 # ASSIST FUNCTIONS
 # =============================================================================
-def capture_args():
+def define_commandline_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--percent-change',
                         help='find out percent change of coin',
@@ -74,7 +74,8 @@ def capture_args():
     return parser
 
 
-def parse():
+def parse_commandline_options():
+    global args
     args = args.parse_args()
     if not args.run:
         sys.exit()
@@ -112,24 +113,24 @@ def parse():
 # =============================================================================
 # MAIN FUNCTIONS
 # =============================================================================
-def validate():
+def validate_environment():
     dir_exists('.watch', 'no watch directory found; creating one now')
     file_exists(watchlist, 'no watchlist.txt found; creating one now')
     file_exists(watchdata, 'no watchlist.csv found; creating one now')
     file_exists(exchanges, 'no exchanges.txt found, creating one now')
     global args
-    args = capture_args()
+    args = define_commandline_arguments()
     if len(sys.argv) == 1:
         args.print_help()
         sys.exit()
 
 
-def update():  # maybe this can be optimized so you don't have to open the file every update
+def update():
     f = open(watchdata, 'a')
     date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     for crypto in fetch_watchlist():
-        price = float(m.coin(crypto)[0]['price_usd'])  # * unicode bug
-        symbol = str(m.coin(crypto)[0]['symbol'])
+        price = float(Market().coin(crypto)[0]['price_usd'])  # * unicode bug
+        symbol = str(Market().coin(crypto)[0]['symbol'])
         csv.writer(f).writerow([date, price, symbol])
         if price < sell(symbol, price):
             print_fail(symbol + ' $' + str(price))
@@ -139,12 +140,10 @@ def update():  # maybe this can be optimized so you don't have to open the file 
             print symbol + ' $' + str(price)
     f.write('\n')
     f.close()
+    # maybe this can be optimized so you don't have to open the file every update
 
 
-def run():
-    validate()
-    parse()
-    backfill()  # should automatically check for missed dates
+def init():
     cycles = args.cycles
     while cycles > 0:
         cycles -= 1
@@ -153,6 +152,14 @@ def run():
         update()
         print '\n...\n'
         time.sleep(args.delay)
+
+
+def run():
+    validate_environment()
+    parse_commandline_options()
+    backfill()  # should automatically check for missed dates
+    init()
+
 
 # =============================================================================
 # RUN
