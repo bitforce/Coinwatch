@@ -4,7 +4,7 @@ from scraper import scrape_exchanges
 
 
 # ------------------------------------------------------------------------------
-# ASSIST FUNCTIONS
+# assist functions
 # ------------------------------------------------------------------------------
 def extract(rows, cols):
     data = []
@@ -17,8 +17,11 @@ def extract(rows, cols):
 
 
 # ------------------------------------------------------------------------------
-# MAIN FUNCTIONS
+# main functions
 # ------------------------------------------------------------------------------
+
+# pulled from scrape
+# ----------------------------------------
 def extract_main(*top):
     cols = scrape_market_caps()[1]
     if not top or float(top) / 100 <= 1:
@@ -42,3 +45,11 @@ def extract_exchanges(coin):
     rows = scrape_exchanges(coin)[0]
     cols = scrape_exchanges(coin)[1]
     return extract(rows, cols)
+
+
+# pulled from wrapper
+# ----------------------------------------
+def extract_percent_changes(name):
+    return [m.coin(data[0])[0]['percent_change_1h'],
+            m.coin(data[0])[0]['percent_change_24h'],
+            m.coin(data[0])[0]['percent_change_7d']]

@@ -40,6 +40,18 @@ def fetch_watchlist():
         sys.exit(1)
 
 
+def read_prices(symbol):
+    prices = []
+    with open(watchdata, 'r') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            if row and row[2] == symbol:  # verify non-empty arr
+                prices.append(float(row[1]))
+    if not prices:
+        return [-1]
+    return prices
+
+
 def file_exists(f, msg):
     if not os.path.isfile(f):
         print_bold(msg)

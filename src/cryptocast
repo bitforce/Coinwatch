@@ -15,19 +15,28 @@ import sys
 
 
 # =============================================================================
-# GLOBAL VARIABLES
+# global variables
 # =============================================================================
 args = None
 
 
 # =============================================================================
-# ASSIST FUNCTIONS
+# assist functions
 # =============================================================================
-def define_commandline_arguments():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-p', '--percent-change',
-                        help='find out percent change of coin',
-                        nargs='+')
+def define_commandline_arguments():  # EVENTUALLY UPDATE TO ADD SUBPARSERS AND POS ARGS
+    parser = argparse.ArgumentParser(prog='cryptocast')
+    parser.add_argument('--run',
+                        help='runs watch daemon',
+                        action='store_true')
+    # config
+    # ------
+    parser.add_argument('--set-path',
+                        help='sets the watchlists\' location path')
+    parser.add_argument('--get-path',
+                        help='sets the watchlists\' location path',
+                        action='store_true')
+    # common args
+    # -----------
     parser.add_argument('-d', '--delay',
                         help='delay of http request; in seconds',
                         default=60,
@@ -36,82 +45,59 @@ def define_commandline_arguments():
                         help='total number of http requests',
                         default=100,
                         type=long)
-    parser.add_argument('-r', '--remove',
-                        help='remove cryptos from watchlist',
-                        nargs='+')
     parser.add_argument('-a', '--add',
                         help='add cryptos to watchlist',
                         nargs='+')
+    parser.add_argument('-r', '--remove',
+                        help='remove cryptos from watchlist',
+                        nargs='+')
+    # rare args
+    # ---------
+    parser.add_argument('--add-exchanges',
+                        help='add exchanges that host your cryptos',
+                        nargs='+')
+    parser.add_argument('--remove-exchanges',
+                        help='remove exchanges that host your cryptos',
+                        nargs='+')
+    parser.add_argument('-w', '--wipe',
+                        help='wipe watchlist.txt clean',
+                        action='store_true')
+    parser.add_argument('--wipe-csv',
+                        help='wipe watchlist.csv clean',
+                        action='store_true')
+    # display local data
+    # ------------------
+    parser.add_argument('--watchlist',
+                        help='prints watchlist.txt contents',
+                        action='store_true')
+    # display numerical data
+    # ----------------------
     parser.add_argument('--low',
                         help='returns lowest price--use ticker symbol',
                         nargs='+')
     parser.add_argument('--high',
                         help='returns lowest price--use ticker symbol',
                         nargs='+')
-    parser.add_argument('--exchange',
-                        help='add exchange(s) that you trade on',
-                        nargs='+')
-    parser.add_argument('-w', '--wipe',
-                        help='wipe watchlist.txt clean',
-                        action='store_true')
-    parser.add_argument('-e', '--erase',
-                        help='wipe watchlist.csv clean',
-                        action='store_true')
-    parser.add_argument('--show-watchlist',
-                        help='prints watchlist.txt contents',
-                        action='store_true')
-    parser.add_argument('--show-stddev',
+    parser.add_argument('--standard-deviation',
                         help='shows asset\'s standard deviation',
                         nargs='+')
-    parser.add_argument('--set-path',
-                        help='sets the watchlists\' location path')
-    parser.add_argument('--get-path',
-                        help='sets the watchlists\' location path',
-                        action='store_true')
-    parser.add_argument('--run',
-                        help='runs watch daemon',
-                        action='store_true')
+    parser.add_argument('--percent-changes',
+                        help='shows assets\'s percent change over custom period',
+                        nargs='+')
+    parser.add_argument('--simple-percent-changes',
+                        help='shows assets\'s percent change over 1H, 24H, 7D',
+                        nargs='+')
     return parser
 
 
-def parse_commandline_options():
-    global args
-    args = args.parse_args()
-    if not args.run:
-        sys.exit()
-    if not fetch_watchlist():
-        print_warn('not cryptos in watchlist')
-        sys.exit()
-    if args.low:
-        show('low', args.low)
-    if args.high:
-        show('high', args.high)
-    if args.set_path:
-        set_path(args.set_path)
-    if args.get_path:
-        print get_path()
-    if args.show_watchlist:
-        show(watchlist)
-    if args.show_stddev:
-        show('delta', args.stddev)
-    if args.percent_change:
-        percent_change(args.percent_change)
-    if args.wipe:
-        print_warn('wiping watchlist.txt contents')
-        open(watchlist, 'w').close()
-    if args.erase:
-        print_warn('wiping watchlist.csv contents')
-        open(watchdata, 'w').close()
-    if args.remove:
-        for arg in args.remove:
-            remove(arg)
-    if args.add:
-        for arg in args.add:
-            add(arg)
+def verified_coin():
+    if type(m.coin(data[0])) is not list:
+        print_fail('{} : coin name non-existent or mispelled'.format(data[0]))
+        return
 
 
 # =============================================================================
-# MAIN FUNCTIONS
+# main functions
 # =============================================================================
 def validate_environment():
     dir_exists('.watch', 'no watch directory found; creating one now')
@@ -123,6 +109,59 @@ def validate_environment():
     if len(sys.argv) == 1:
         args.print_help()
         sys.exit()
+    if not fetch_watchlist():
+        print_warn('no cryptos in watchlist')
+        sys.exit()
+    args = args.parse_args()
+    if not args.run:
+        sys.exit()
+
+
+def parse_logic():
+    # config
+    # ------
+    if args.set_path:
+        set_path(args.set_path)
+    if args.get_path:
+        show_path()
+    # common args
+    # -----------
+    if args.remove:
+        for arg in args.remove:
+            remove_crypto(arg)
+    if args.add:
+        for arg in args.add:
+            add_crypto(arg)
+    if args.remove_exchange:
+        for arg in args.remove_exchange:
+            remove_exchange(arg)
+    if args.add_exchange:
+        for arg in args.add_exchange:
+            add_exchange(arg)
+    # rare args
+    # ---------
+    if args.wipe:
+        print_warn('wiping watchlist.txt contents')
+        open(watchlist, 'w').close()
+    if args.wipe_csv:
+        print_warn('wiping watchlist.csv contents')
+        open(watchdata, 'w').close()
+    # display local data
+    # ------------------
+    if args.show_watchlist:
+        show_watchlist()
+    # display numerical data
+    # ----------------------
+    if args.low:
+        show_low(args.low)
+    if args.high:
+        show_high(args.high)
+    if args.show_standard_deviation:
+        show_delta(args.show_standard_deviationh)
+    if args.simple_percent_changes:
+        for arg in args.simple_percent_changes:
+            if verified_coin(arg):
+                show_percent_changes(arg)
 
 
 def update():
@@ -130,7 +169,7 @@ def update():
     date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     for crypto in fetch_watchlist():
         price = float(Market().coin(crypto)[0]['price_usd'])  # * unicode bug
-        symbol = str(Market().coin(crypto)[0]['symbol'])
+        symbol = str(Market().coin(crypto)[0]['symbol'])  # * unicode bug
         csv.writer(f).writerow([date, price, symbol])
         if price < sell(symbol, price):
             print_fail(symbol + ' $' + str(price))
@@ -156,7 +195,7 @@ def init():
 
 def run():
     validate_environment()
-    parse_commandline_options()
+    parse_logic()
     backfill()  # should automatically check for missed dates
     init()
 

@@ -1,4 +1,4 @@
-from aux.tracker import *
+from aux.generic import read_prices
 
 
 # =============================================================================
@@ -10,24 +10,24 @@ from aux.tracker import *
 # main functions
 # =============================================================================
 
-# commandline
+# commandline-option functions
 # ----------------------------------------
-def add(crypto):
-    if type(m.coin(crypto)) is not list:
-        print_bold('{} : coin crypto non-existent or mispelled'.format(crypto))
+def add_crypto(name):
+    if type(m.coin(name)) is not list:
+        print_bold('{} : coin crypto non-existent or mispelled'.format(name))
         return
     f = open(watchlist, 'a')
-    if crypto not in open(watchlist).read():
-        f.write(str(crypto + ' (' + m.coin(crypto)[0]['symbol'] + ')\n'))
+    if name not in open(watchlist).read():
+        f.write(str(name + ' (' + m.coin(name)[0]['symbol'] + ')\n'))
     else:
-        print_warn(crypto + ' is already being tracked')
+        print_warn(name + ' is already being tracked')
     f.close()
 
 
-def remove(crypto):
+def remove_crypto(name):
     coins = fetch_watchlist()
     for coin in coins:
-        if coin == crypto:
+        if coin == name:
             coins.remove(coin)
     f = open(watchlist, 'w')
     for coin in coins:
@@ -35,19 +35,24 @@ def remove(crypto):
     f.close()
 
 
-def include(exchanges):
+def add_exchange(exchange):
     return
 
 
-# data storage
+def remove_exchange(exchange):
+    return
+
+
+# data storage functions
 # ----------------------------------------
 def backfill():
     return
 
 
-# configuration manipulation
-# ----------------------------------------
+# configuration functions
+# ---------------------------------------
 def get_path():
+    # if config file not set, then return current dir
     return path
 
 
@@ -57,19 +62,40 @@ def set_path(newpath):
     # get os type and then appropriate use '$HOME' or '$home', etc...
 
 
-# numeric return type
+# numeric data analysis functions
 # ----------------------------------------
-def get_low(crypto):
-    return
+def get_low(name):
+    prices = read_prices(symbol)
+    low = prices[-1]
+    for price in prices:
+        if low > price:
+            low = price
+    return low
 
 
-def get_high(crypto):
-    return
+def get_high(name):
+    prices = read_prices(symbol)
+    high = prices[-1]
+    for price in prices:
+        if high < price:
+            high = price
+    return high
 
 
-def get_standard_deviation(crypto):
-    return
-
-
-def get_percent_change(crypto, interval):
-    return
+def get_percent_change(name, interval):
+    if len(data) > 4 or len(data) < 2:
+        print_fail('must specify at least one asset and a combination of the following: ' +
+                   '1 24 7')
+        return
+    if type(m.coin(data[0])) is not list:
+        print_fail('{} : coin name non-existent or mispelled'.format(data[0]))
+        return
+    times = ['1', '24', '7']
+    for d in data[1:]:
+        if d in times:
+            if d == times[0]:
+                print 'last hour : ' + m.coin(data[0])[0]['percent_change_1h'] + '%'
+            elif d == times[1]:
+                print 'last day : ' + m.coin(data[0])[0]['percent_change_24h'] + '%'
+            elif d == times[2]:
+                print 'this week : ' + m.coin(data[0])[0]['percent_change_7d'] + '%'
