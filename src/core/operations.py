@@ -1,20 +1,24 @@
+from aux.generic import verified_coin
 from aux.generic import read_prices
 
 
-# =============================================================================
-# assist functions
-# =============================================================================
+# configuration
+# -------------
+def get_path():
+    # if config file not set, then return current dir
+    return path
 
 
-# =============================================================================
-# main functions
-# =============================================================================
+def set_path(newpath):
+    global path
+    path = ''
+    # get os type and then appropriate use '$HOME' or '$home', etc...
 
-# commandline-option functions
-# ----------------------------------------
+
+# common args
+# -----------
 def add_crypto(name):
-    if type(m.coin(name)) is not list:
-        print_bold('{} : coin crypto non-existent or mispelled'.format(name))
+    if not verified_coin(name):
         return
     f = open(watchlist, 'a')
     if name not in open(watchlist).read():
@@ -35,6 +39,8 @@ def remove_crypto(name):
     f.close()
 
 
+# rare args
+# ---------
 def add_exchange(exchange):
     return
 
@@ -43,27 +49,8 @@ def remove_exchange(exchange):
     return
 
 
-# data storage functions
-# ----------------------------------------
-def backfill():
-    return
-
-
-# configuration functions
-# ---------------------------------------
-def get_path():
-    # if config file not set, then return current dir
-    return path
-
-
-def set_path(newpath):
-    global path
-    path = ''
-    # get os type and then appropriate use '$HOME' or '$home', etc...
-
-
-# numeric data analysis functions
-# ----------------------------------------
+# numeric data display
+# --------------------
 def get_low(name):
     prices = read_prices(symbol)
     low = prices[-1]
@@ -82,20 +69,9 @@ def get_high(name):
     return high
 
 
-def get_percent_change(name, interval):
-    if len(data) > 4 or len(data) < 2:
-        print_fail('must specify at least one asset and a combination of the following: ' +
-                   '1 24 7')
+def get_simple_percent_changes(name):
+    if not verified_coin(name):
         return
-    if type(m.coin(data[0])) is not list:
-        print_fail('{} : coin name non-existent or mispelled'.format(data[0]))
-        return
-    times = ['1', '24', '7']
-    for d in data[1:]:
-        if d in times:
-            if d == times[0]:
-                print 'last hour : ' + m.coin(data[0])[0]['percent_change_1h'] + '%'
-            elif d == times[1]:
-                print 'last day : ' + m.coin(data[0])[0]['percent_change_24h'] + '%'
-            elif d == times[2]:
-                print 'this week : ' + m.coin(data[0])[0]['percent_change_7d'] + '%'
+    return [m.coin(data[0])[0]['percent_change_1h'],
+            m.coin(data[0])[0]['percent_change_24h'],
+            m.coin(data[0])[0]['percent_change_7d']]

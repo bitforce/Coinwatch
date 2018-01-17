@@ -29,6 +29,12 @@ def print_fail(string):
     print RED + string + END
 
 
+def verified_coin():
+    if type(m.coin(data[0])) is not list:
+        print_fail('{} : coin name non-existent or mispelled'.format(data[0]))
+        return
+
+
 def fetch_watchlist():
     try:
         a = []
@@ -50,39 +56,3 @@ def read_prices(symbol):
     if not prices:
         return [-1]
     return prices
-
-
-def file_exists(f, msg):
-    if not os.path.isfile(f):
-        print_bold(msg)
-        open(f, 'w').close()
-
-
-def dir_exists(d, msg):
-    if not os.path.isdir(d):
-        print_bold(msg)
-        os.makedirs(d)
-
-
-def show(*options):
-    if len(options) == 2 and options[0] == 'low':
-        for arg in options[1]:
-            arg = arg.upper()
-            if low(arg) < 0:
-                print_fail(arg + ' : no pricing data to be read')
-                continue
-            print arg + ' : ' + str(low(arg))
-    elif len(options) == 2 and options[0] == 'high':
-        for arg in args.high:
-            arg = arg.upper()
-            if high(arg) < 0:
-                print_fail(arg + ' : no pricing data to be read')
-                continue
-            print arg + ' : ' + str(high(arg))
-    elif len(options) == 2 and options[0] == 'delta':
-        for dev in args.show_stddev:
-            if stddev(dev) != 0:
-                print str(get_standard_deviation(dev))
-    else:
-        for item in open(options[0]):
-            print item,
