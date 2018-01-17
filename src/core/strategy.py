@@ -2,55 +2,10 @@ from statistics import *
 
 
 # =============================================================================
-# strategy functions
+# assist functions
 # =============================================================================
-def long_hold():
+def exists_on_my_exchange(name):
     return
-
-
-def spread_monitor():
-    return
-
-
-def first_to_news():
-    return
-
-
-def post_fundamental_volatility_meter():
-    return
-
-
-def isolated_volume_monitor_via_country_ip():
-    return
-
-
-def order_book_analysis_optimizer():
-    return
-
-
-def statistical_arbitrage():
-    return
-
-
-def relative_price_value_arbitrage():
-    return
-
-
-def bullish_directional_rate_meter():
-    return
-
-
-def historical_pattern_recognition():
-    return
-
-
-def brownian_motion():
-    return
-
-
-def ai_neural_net():
-    return
-
 
 # =============================================================================
 # ultimate strategy
