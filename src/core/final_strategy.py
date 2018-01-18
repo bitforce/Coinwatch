@@ -1,5 +1,18 @@
-from core.stats.standard_deviation import simple_standard_deviation
-from core.stats.mean import simple_mean
+from coinwrap import Market
+
+from core.strats.arbitrage import *
+from core.strats.monitor import *
+from core.strats.trailer import *
+from core.strats.stats.standard_deviation import *
+from core.strats.stats.mean import *
+from core.strats.nlp import *
+
+from aux.generic import fetch_watchlist
+from aux.generic import print_fail
+from aux.generic import watchdata
+
+import datetime
+import csv
 
 
 # =============================================================================

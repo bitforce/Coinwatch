@@ -136,11 +136,11 @@ def validate_environment():
 
 
 def parse_logic():
+    global args
     args = define_commandline_arguments()
     if len(sys.argv) == 1:
         args.print_help()
         sys.exit()
-    global args
     args = args.parse_args()
     global start
     start = args.start

@@ -1,10 +1,11 @@
+from coinwrap import Market
+
 from aux.generic import fetch_watchlist
 from aux.generic import verified_coin
 from aux.generic import read_prices
 from aux.generic import print_warn
 from aux.generic import watchlist
 
-from coinwrap import Market
 
 # global var
 # ----------
