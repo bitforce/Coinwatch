@@ -1,4 +1,6 @@
 from coinwrap import Market
+
+import csv
 import os.path
 
 
@@ -33,7 +35,8 @@ def print_fail(string):
 def verified_coin(name):
     if type(Market().coin(name)) is not list:
         print_fail('{} : coin name non-existent or mispelled'.format(data[0]))
-        return
+        return False
+    return True
 
 
 def fetch_watchlist():

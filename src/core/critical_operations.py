@@ -17,12 +17,14 @@ def is_backfilled():  # checks to see if current data is up to date
     # change missing value to something
     # match both strings (if same date, condition should be true)
     # return condition output (boolean)
-    return False
+    return True
 
 
 def backfill():
     # SHOULD ONLY BACKFILL MISSING DATA TO CURRENT
     # DEAL WITH SCOPE LATER TOO
+    if is_backfilled():
+        return
     print_bold('backfilling data...')
     with open(backfills, 'a') as f:
         for coin in fetch_watchlist():

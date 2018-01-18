@@ -1,5 +1,14 @@
+from aux.generic import fetch_watchlist
 from aux.generic import verified_coin
 from aux.generic import read_prices
+from aux.generic import print_warn
+from aux.generic import watchlist
+
+from coinwrap import Market
+
+# global var
+# ----------
+m = Market()
 
 
 # configuration
@@ -51,7 +60,7 @@ def remove_exchange(name):
 
 # numeric data display
 # --------------------
-def get_low(name):
+def get_low(symbol):
     prices = read_prices(symbol)
     low = prices[-1]
     for price in prices:
@@ -60,7 +69,7 @@ def get_low(name):
     return low
 
 
-def get_high(name):
+def get_high(symbol):
     prices = read_prices(symbol)
     high = prices[-1]
     for price in prices:
@@ -69,9 +78,15 @@ def get_high(name):
     return high
 
 
+def get_standard_deviation(symbol):
+    return
+
+
+def get_percent_change(symbol):
+    return
+
+
 def get_simple_percent_changes(name):
-    if not verified_coin(name):
-        return
-    return [m.coin(data[0])[0]['percent_change_1h'],
-            m.coin(data[0])[0]['percent_change_24h'],
-            m.coin(data[0])[0]['percent_change_7d']]
+    return [m.coin(name)[0]['percent_change_1h'],
+            m.coin(name)[0]['percent_change_24h'],
+            m.coin(name)[0]['percent_change_7d']]
