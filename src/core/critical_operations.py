@@ -39,3 +39,7 @@ def backfill():
 # to only scrape data from the page that's necessary (up to that limit); otherwise, we'd
 # be performing whole scrapes for nothing --> this can also be improved to be a daily
 # crontab function that pre-fills the data for you
+
+
+def backup():
+    return

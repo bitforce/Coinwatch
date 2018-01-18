@@ -13,7 +13,7 @@ def exists_on_my_exchange(name):
 
 
 # =============================================================================
-# ultimate decision
+# actions
 # =============================================================================
 def sell(symbol, current_price):  # statistically calculated buy price
     return mean(symbol, current_price) - stddev(symbol)
