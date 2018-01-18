@@ -3,7 +3,8 @@
 
 from coinwrap import Market
 
-from core.operations import *
+from core.commandline_operations import *
+from core.critical_operations import *
 from aux.generic import *
 
 import argparse
@@ -17,6 +18,7 @@ import sys
 # =============================================================================
 # global variables
 # =============================================================================
+start = None
 args = None
 
 
@@ -24,8 +26,10 @@ args = None
 # assist functions
 # =============================================================================
 def define_commandline_arguments():  # EVENTUALLY UPDATE TO ADD SUBPARSERS AND POS ARGS
-    parser = argparse.ArgumentParser(prog='cryptocast')
-    parser.add_argument('--run',
+    parser = argparse.ArgumentParser('cryptocast')
+    # subparser = parser.add_subparsers()
+    # subparser.add_parser('ran')
+    parser.add_argument('--start',
                         help='runs watch daemon',
                         action='store_true')
     # config
@@ -102,7 +106,7 @@ def dir_exists(d, msg):  # doesn't need to exist, but I do it for clean-code sty
         os.makedirs(d)
 
 
-def show(*options):
+def show(*options):  # RID THIS SHIT
     if len(options) == 2 and options[0] == 'low':
         for arg in options[1]:
             arg = arg.upper()
@@ -134,20 +138,17 @@ def validate_environment():
     file_exists(watchlist, 'no watchlist.txt found; creating one now')
     file_exists(watchdata, 'no watchlist.csv found; creating one now')
     file_exists(exchanges, 'no exchanges.txt found, creating one now')
-    global args
+
+
+def parse_logic():
+    # init
+    # ----
     args = define_commandline_arguments()
     if len(sys.argv) == 1:
         args.print_help()
         sys.exit()
-    if not fetch_watchlist():
-        print_warn('no cryptos in watchlist')
-        sys.exit()
     args = args.parse_args()
-    if not args.run:
-        sys.exit()
-
-
-def parse_logic():
+    start = args.start
     # config
     # ------
     if args.set_path:
@@ -162,10 +163,10 @@ def parse_logic():
     if args.add:
         for arg in args.add:
             add_crypto(arg)
-    if args.remove_exchange:
+    if args.remove_exchanges:
         for arg in args.remove_exchange:
             remove_exchange(arg)
-    if args.add_exchange:
+    if args.add_exchanges:
         for arg in args.add_exchange:
             add_exchange(arg)
     # rare args
@@ -178,7 +179,7 @@ def parse_logic():
         open(watchdata, 'w').close()
     # display local data
     # ------------------
-    if args.show_watchlist:
+    if args.watchlist:
         show_watchlist()
     # display numerical data
     # ----------------------
@@ -186,7 +187,7 @@ def parse_logic():
         show_low(args.low)
     if args.high:
         show_high(args.high)
-    if args.show_standard_deviation:
+    if args.standard_deviation:
         show_delta(args.show_standard_deviationh)
     if args.simple_percent_changes:
         for arg in args.simple_percent_changes:
@@ -213,6 +214,12 @@ def update():
 
 
 def init():
+    if not start:
+        print 'exiting'
+        sys.exit()
+    if not fetch_watchlist():
+        print_warn('no cryptos in watchlist')
+        sys.exit()
     cycles = args.cycles
     while cycles > 0:
         cycles -= 1

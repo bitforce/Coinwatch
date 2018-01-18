@@ -41,11 +41,11 @@ def remove_crypto(name):
 
 # rare args
 # ---------
-def add_exchange(exchange):
+def add_exchange(name):
     return
 
 
-def remove_exchange(exchange):
+def remove_exchange(name):
     return
 
 

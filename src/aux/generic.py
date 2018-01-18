@@ -1,3 +1,4 @@
+from coinwrap import Market
 import os.path
 
 
@@ -29,8 +30,8 @@ def print_fail(string):
     print RED + string + END
 
 
-def verified_coin():
-    if type(m.coin(data[0])) is not list:
+def verified_coin(name):
+    if type(Market().coin(name)) is not list:
         print_fail('{} : coin name non-existent or mispelled'.format(data[0]))
         return
 
