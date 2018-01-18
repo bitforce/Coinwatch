@@ -4,7 +4,8 @@
 from coinwrap import Market
 
 from core.commandline_operations import *
-from core.critical_operations import *
+from core.critical_operations import backfill
+from core.final_strategy import update
 from aux.generic import *
 
 import argparse
@@ -84,7 +85,7 @@ def define_commandline_arguments():  # EVENTUALLY UPDATE TO ADD SUBPARSERS AND P
     parser.add_argument('--standard-deviation',
                         help='shows asset\'s standard deviation',
                         nargs='+')
-    parser.add_argument('--percent-changes',
+    parser.add_argument('--percent-change',
                         help='shows assets\'s percent change over custom period',
                         nargs='+')
     parser.add_argument('--simple-percent-changes',
@@ -139,6 +140,7 @@ def parse_logic():
     if len(sys.argv) == 1:
         args.print_help()
         sys.exit()
+    global args
     args = args.parse_args()
     global start
     start = args.start
@@ -204,35 +206,17 @@ def parse_logic():
             for coin in get_simple_percent_changes(arg):
                 c = str(coin)
                 if count == 0:
-                    print '1H  = ' + c + '%'
+                    print '1H = ' + c + '%'
                 elif count == 1:
-                    print '24H = ' + c + '%'
+                    print '1D = ' + c + '%'
                 elif count == 2:
-                    print '7D  = ' + c + '%'
+                    print '7D = ' + c + '%'
                 count += 1
 
 
-def update():
-    f = open(watchdata, 'a')
-    date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    for crypto in fetch_watchlist():
-        price = float(Market().coin(crypto)[0]['price_usd'])  # * unicode bug
-        symbol = str(Market().coin(crypto)[0]['symbol'])  # * unicode bug
-        csv.writer(f).writerow([date, price, symbol])
-        if price < sell(symbol, price):
-            print_fail(symbol + ' $' + str(price))
-        elif price > buy(symbol, price):
-            print_pass(symbol + ' $' + str(price))
-        else:
-            print symbol + ' $' + str(price)
-    f.write('\n')
-    f.close()
-    # maybe this can be optimized so you don't have to open the file every update
-
-
 def init():
+    backfill()
     if not start:
-        print 'exiting'
         sys.exit()
     if not fetch_watchlist():
         print_warn('no cryptos in watchlist')
@@ -250,7 +234,6 @@ def init():
 def run():
     validate_environment()
     parse_logic()
-    backfill()  # should automatically check for missed dates
     init()
 
 
