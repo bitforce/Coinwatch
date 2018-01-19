@@ -52,7 +52,7 @@ def update():
         symbol = str(Market().coin(crypto)[0]['symbol'])  # * unicode bug
         csv.writer(f).writerow([date, price, symbol])
         print_symbol = '{:8}'.format(symbol)
-        print_price = '{:>8}'.format('$') + '{0:.2f}'.format(price)
+        print_price = '{:>4}'.format('$') + '{0:.2f}'.format(price)
         if price < sell(symbol, print_price):
             print_fail(print_symbol + print_price)
         elif price > buy(symbol, price):
