@@ -74,6 +74,9 @@ def define_commandline_arguments():  # EVENTUALLY UPDATE TO ADD SUBPARSERS AND P
     parser.add_argument('--watchlist',
                         help='prints watchlist.txt contents',
                         action='store_true')
+    parser.add_argument('--exchanges',
+                        help='prints exchanges.txt contents',
+                        action='store_true')
     # display numerical data
     # ----------------------
     parser.add_argument('--low',
@@ -104,25 +107,6 @@ def dir_exists(d, msg):  # doesn't need to exist, but I do it for clean-code sty
     if not os.path.isdir(d):
         print_bold(msg)
         os.makedirs(d)
-
-
-def show(*options):  # RID THIS SHIT
-    if len(options) == 2 and options[0] == 'low':
-        return
-    elif len(options) == 2 and options[0] == 'high':
-        for arg in args.high:
-            arg = arg.upper()
-            if high(arg) < 0:
-                print_fail(arg + ' : no pricing data to be read')
-                continue
-            print arg + ' : ' + str(high(arg))
-    elif len(options) == 2 and options[0] == 'delta':
-        for dev in args.show_stddev:
-            if stddev(dev) != 0:
-                print str(get_standard_deviation(dev))
-    else:
-        for item in open(options[0]):
-            print item,
 
 
 # =============================================================================
@@ -176,6 +160,9 @@ def parse_logic():
     # ------------------
     if args.watchlist:
         for name in open(watchlist):
+            print name,
+    if args.watchlist:
+        for name in open(exchanges):
             print name,
     # display numerical data
     # ----------------------

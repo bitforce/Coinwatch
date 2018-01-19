@@ -34,7 +34,7 @@ def print_fail(string):
 
 def verified_coin(name):
     if type(Market().coin(name)) is not list:
-        print_fail('{} : coin name non-existent or mispelled'.format(data[0]))
+        print_fail('{} : coin name non-existent or mispelled'.format(name))
         return False
     return True
 

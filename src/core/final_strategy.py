@@ -8,6 +8,7 @@ from core.strats.stats.mean import *
 from core.strats.nlp import *
 
 from aux.generic import fetch_watchlist
+from aux.generic import print_pass
 from aux.generic import print_fail
 from aux.generic import watchdata
 
@@ -50,12 +51,14 @@ def update():
         price = float(Market().coin(crypto)[0]['price_usd'])  # * unicode bug
         symbol = str(Market().coin(crypto)[0]['symbol'])  # * unicode bug
         csv.writer(f).writerow([date, price, symbol])
-        if price < sell(symbol, price):
-            print_fail(symbol + ' $' + str(price))
+        print_symbol = '{:8}'.format(symbol)
+        print_price = '{:>8}'.format('$') + '{0:.2f}'.format(price)
+        if price < sell(symbol, print_price):
+            print_fail(print_symbol + print_price)
         elif price > buy(symbol, price):
-            print_pass(symbol + ' $' + str(price))
+            print_pass(print_symbol + print_price)
         else:
-            print symbol + ' $' + str(price)
+            print print_symbol + print_price
     f.write('\n')
     f.close()
     # maybe this can be optimized so you don't have to open the file every update
