@@ -1,4 +1,5 @@
 from scraper import scrape_historical_data
+from scraper import scrape_all_exchanges
 from scraper import scrape_market_caps
 from scraper import scrape_exchanges
 
@@ -19,7 +20,7 @@ def extract(rows, cols):
 # =============================================================================
 # main functions
 # =============================================================================
-def extract_main(*top):
+def extract_main_page(*top):
     cols = scrape_market_caps()[1]
     if not top or float(top) / 100 <= 1:
         rows = scrape_market_caps()[0]
@@ -42,3 +43,11 @@ def extract_exchanges(coin):
     rows = scrape_exchanges(coin)[0]
     cols = scrape_exchanges(coin)[1]
     return extract(rows, cols)
+
+
+def extract_all_exchanges():
+    exchanges = []
+    for row in scrape_all_exchanges():
+        if row.has_attr('id'):
+            exchanges.append(row.text.strip().split('.')[1][1:].lower())
+    return exchanges

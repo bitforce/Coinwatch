@@ -32,13 +32,6 @@ def print_fail(string):
     print RED + string + END
 
 
-def verified_exchange(name):
-    if name in pull_exchanges():
-        return True
-    print_fail('{} : exchange non-existent or mispelled'.format(name))
-    return False
-
-
 def verified_coin(name):
     if type(Market().coin(name)) is not list:
         print_fail('{} : coin name non-existent or mispelled'.format(name))
@@ -50,7 +43,7 @@ def fetch_exchanges():  # NOT SURE IF THIS IS RIGHT
     try:
         a = []
         for e in open(exchanges).read().split('\n')[:-1]:
-            a.append(e.split()[:-1][0])
+            a.append(e)
         return a
     except IOError:
         print_fail('failed to open exchanges')

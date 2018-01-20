@@ -7,7 +7,7 @@ import datetime
 import requests
 
 
-url = 'https://coinmarketcap.com'
+link = 'https://coinmarketcap.com'
 
 
 # ------------------------------------------------------------------------------
@@ -43,8 +43,14 @@ def today():
 # ------------------------------------------------------------------------------
 # main functions
 # ------------------------------------------------------------------------------
+def scrape_all_exchanges():
+    url = link + '/exchanges/volume/24-hour/all/'
+    soup = BeautifulSoup(requests.get(url).text, 'lxml')
+    return soup.find('table', class_='table').find_all('tr')
+
+
 def scrape_exchanges(coin):
-    url = url + coin + '/#markets'
+    url = link + '/' + coin + '/#markets'
     rows = scrape_rows(BeautifulSoup(requests.get(url).text, 'lxml'))
     cols = scrape_cols(BeautifulSoup(requests.get(url).text, 'lxml'))
     return [rows, cols]
@@ -61,22 +67,7 @@ def scrape_market_caps(*args):
 
 
 def scrape_historical_data(coin):
-    global url
-    url += '/currencies/' + coin + '/historical-data/?start=20130428&end=' + today()
+    url = link + '/currencies/' + coin + '/historical-data/?start=20130428&end=' + today()
     rows = scrape_rows(BeautifulSoup(requests.get(url).text, 'lxml'))
     cols = scrape_cols(BeautifulSoup(requests.get(url).text, 'lxml'))
     return [rows, cols]
-
-
-# exceptions
-# ----------
-def pull_exchanges():
-    global url
-    url = url + '/exchanges/volume/24-hour/all/'
-    soup = BeautifulSoup(requests.get(url).text, 'lxml')
-    rows = soup.find('table', class_='table').find_all('tr')
-    exchanges = []
-    for row in rows:
-        if row.has_attr('id'):
-            exchanges.append(row.text.strip().split('.')[1][1:].lower())
-    return exchanges

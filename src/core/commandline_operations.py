@@ -1,13 +1,15 @@
 from coinwrap import Market
 
-from aux.generic import verified_exchange
 from aux.generic import fetch_exchanges
 from aux.generic import fetch_watchlist
 from aux.generic import verified_coin
 from aux.generic import read_prices
+from aux.generic import print_fail
 from aux.generic import print_warn
 from aux.generic import exchanges
 from aux.generic import watchlist
+
+from aux.extract import extract_all_exchanges
 
 
 # global var
@@ -55,7 +57,8 @@ def remove_crypto(name):
 # rare args
 # ---------
 def add_exchange(name):
-    if not verified_exchange(name):
+    if name not in extract_all_exchanges():
+        print_fail('{} : exchange non-existent or mispelled'.format(name))
         return
     f = open(exchanges, 'a')
     if name not in open(exchanges).read():
@@ -66,7 +69,14 @@ def add_exchange(name):
 
 
 def remove_exchange(name):
-    return
+    arr = fetch_exchanges()
+    for exchange in arr:
+        if exchange == name:
+            arr.remove(exchange)
+    f = open(exchanges, 'w')
+    for exchange in arr:
+        f.write(exchange + '\n')
+    f.close()
 
 
 # numeric data display
