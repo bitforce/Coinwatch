@@ -203,15 +203,17 @@ def parse_logic():
             if not verified_coin(arg):
                 return
             count = 0
+            print arg.upper()
             for coin in get_simple_percent_changes(arg):
-                c = str(coin)
+                c = str(coin) + '%'
                 if count == 0:
-                    print '1H = ' + c + '%'
+                    print '{:5}'.format('1H = ') + c
                 elif count == 1:
-                    print '1D = ' + c + '%'
+                    print '{:5}'.format('1D = ') + c
                 elif count == 2:
-                    print '7D = ' + c + '%'
+                    print '{:5}'.format('1W = ') + c
                 count += 1
+            print
 
 
 def init():
