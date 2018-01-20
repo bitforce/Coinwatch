@@ -6,11 +6,15 @@ from core.strats.trailer import *
 from core.strats.stats.standard_deviation import *
 from core.strats.stats.mean import *
 from core.strats.nlp import *
-
+from core.commandline_operations import get_simple_percent_changes
 from aux.generic import fetch_exchanges
 from aux.generic import fetch_watchlist
-from aux.generic import print_pass
-from aux.generic import print_fail
+from aux.generic import print_pass_single_line
+from aux.generic import print_fail_single_line
+from aux.generic import print_bold
+from aux.generic import GREEN
+from aux.generic import RED
+from aux.generic import END
 from aux.generic import watchdata
 
 import datetime
@@ -26,6 +30,14 @@ def exchanges_match(name):
     for exchange in extract_exchanges(name):
         if exchange in my_exchanges:
             tradable.append(exchange)
+
+
+def hue(percent):
+    if float(percent) > 0:
+        return GREEN + str(percent) + '%' + END
+    if float(percent) < 0:
+        return RED + str(percent) + '%' + END
+    return str(percent) + '%'
 
 
 # =============================================================================
@@ -52,13 +64,20 @@ def update():
         symbol = str(Market().coin(crypto)[0]['symbol'])
         csv.writer(f).writerow([date, price, symbol])
         print_symbol = '{:8}'.format(symbol)
-        print_price = '{:>4}'.format('$') + '{0:.2f}'.format(price)
+        print_price = '{:>4}'.format('$') + '{:<10.2f}'.format(price)
+        hour = hue(get_simple_percent_changes(crypto)[0])
+        day = hue(get_simple_percent_changes(crypto)[1])
+        week = hue(get_simple_percent_changes(crypto)[2])
+        percents = '|    {:18} {:<18} {}'.format(hour, day, week)
         if price < sell(symbol, price):
-            print_fail(print_symbol + print_price)
+            print_fail_single_line(print_symbol + print_price)
+            print percents
         elif price > buy(symbol, price):
-            print_pass(print_symbol + print_price)
+            print_pass_single_line(print_symbol + print_price)
+            print percents
         else:
-            print print_symbol + print_price
+            print print_symbol + print_price,
+            print percents
     f.write('\n')
     f.close()
 

@@ -1,8 +1,6 @@
 #!/usr/local/bin/python2
 # -*- coding: utf-8 -*-
 
-from coinwrap import Market
-
 from core.commandline_operations import *
 from core.critical_operations import backfill
 from core.final_strategy import update
@@ -10,7 +8,6 @@ from aux.generic import *
 
 import argparse
 import datetime
-import math
 import time
 import csv
 import sys

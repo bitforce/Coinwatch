@@ -16,10 +16,6 @@ watchlist = '.watch/watchlist.txt'
 watchdata = '.watch/watchlist.csv'
 
 
-def print_warn(string):
-    print YELLOW + string + END
-
-
 def print_bold(string):
     print WHITE + string + END
 
@@ -30,6 +26,26 @@ def print_pass(string):
 
 def print_fail(string):
     print RED + string + END
+
+
+def print_warn(string):
+    print YELLOW + string + END
+
+
+def print_bold_single_line(string):
+    print WHITE + string + END,
+
+
+def print_pass_single_line(string):
+    print GREEN + string + END,
+
+
+def print_fail_single_line(string):
+    print RED + string + END,
+
+
+def print_warn_single_line(string):
+    print YELLOW + string + END,
 
 
 def verified_coin(name):

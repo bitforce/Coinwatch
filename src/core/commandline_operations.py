@@ -1,5 +1,6 @@
 from coinwrap import Market
 
+from aux.extract import extract_all_exchanges
 from aux.generic import fetch_exchanges
 from aux.generic import fetch_watchlist
 from aux.generic import verified_coin
@@ -8,8 +9,6 @@ from aux.generic import print_fail
 from aux.generic import print_warn
 from aux.generic import exchanges
 from aux.generic import watchlist
-
-from aux.extract import extract_all_exchanges
 
 
 # global var
