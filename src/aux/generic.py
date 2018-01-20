@@ -33,17 +33,8 @@ def print_fail(string):
 
 
 def verified_exchange(name):
-    from bs4 import BeautifulSoup
-    import requests
-    url = 'https://coinmarketcap.com/exchanges/volume/24-hour/all/'
-    soup = BeautifulSoup(requests.get(url).text, 'lxml')
-    rows = soup.find('table', class_='table').find_all('tr')
-    for row in rows:
-        if row.has_attr('id'):
-            ex = row.text.strip().split('.')[1][1:].lower()
-            print ex
-            if name == ex:
-                return True
+    if name in pull_exchanges():
+        return True
     print_fail('{} : exchange non-existent or mispelled'.format(name))
     return False
 

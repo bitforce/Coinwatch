@@ -42,7 +42,3 @@ def extract_exchanges(coin):
     rows = scrape_exchanges(coin)[0]
     cols = scrape_exchanges(coin)[1]
     return extract(rows, cols)
-
-
-def extract_all_exchanges():
-    print scrape_all_exchanges()

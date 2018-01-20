@@ -66,3 +66,17 @@ def scrape_historical_data(coin):
     rows = scrape_rows(BeautifulSoup(requests.get(url).text, 'lxml'))
     cols = scrape_cols(BeautifulSoup(requests.get(url).text, 'lxml'))
     return [rows, cols]
+
+
+# exceptions
+# ----------
+def pull_exchanges():
+    global url
+    url = url + '/exchanges/volume/24-hour/all/'
+    soup = BeautifulSoup(requests.get(url).text, 'lxml')
+    rows = soup.find('table', class_='table').find_all('tr')
+    exchanges = []
+    for row in rows:
+        if row.has_attr('id'):
+            exchanges.append(row.text.strip().split('.')[1][1:].lower())
+    return exchanges

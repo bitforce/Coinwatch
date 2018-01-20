@@ -7,6 +7,7 @@ from core.commandline_operations import *
 from core.critical_operations import backfill
 from core.final_strategy import update
 from aux.generic import *
+from aux.scraper import pull_exchanges
 
 import argparse
 import datetime
@@ -57,26 +58,30 @@ def define_commandline_arguments():  # EVENTUALLY UPDATE TO ADD SUBPARSERS AND P
                         nargs='+')
     # rare args
     # ---------
-    parser.add_argument('--add-exchanges',
-                        help='add exchanges that host your cryptos',
-                        nargs='+')
-    parser.add_argument('--remove-exchanges',
-                        help='remove exchanges that host your cryptos',
-                        nargs='+')
     parser.add_argument('-w', '--wipe',
                         help='wipe watchlist.txt clean',
                         action='store_true')
     parser.add_argument('--wipe-csv',
                         help='wipe watchlist.csv clean',
                         action='store_true')
+    parser.add_argument('--add-exchanges',
+                        help='add exchanges that host your cryptos',
+                        nargs='+')
+    parser.add_argument('--remove-exchanges',
+                        help='remove exchanges that host your cryptos',
+                        nargs='+')
+    parser.add_argument('--available-exchanges',
+                        help='prints all available exchanges to trade cryptos',
+                        action='store_true')
     # display local data
     # ------------------
-    parser.add_argument('--watchlist',
-                        help='prints watchlist.txt contents',
-                        action='store_true')
     parser.add_argument('--exchanges',
                         help='prints exchanges.txt contents',
                         action='store_true')
+    parser.add_argument('--watchlist',
+                        help='prints watchlist.txt contents',
+                        action='store_true')
+
     # display numerical data
     # ----------------------
     parser.add_argument('--low',
@@ -144,18 +149,21 @@ def parse_logic():
             add_crypto(arg)
     # rare args
     # ---------
-    if args.remove_exchanges:
-        for arg in args.remove_exchange:
-            remove_exchange(arg)
-    if args.add_exchanges:
-        for arg in args.add_exchanges:
-            add_exchange(arg)
     if args.wipe:
         print_warn('wiping watchlist.txt contents')
         open(watchlist, 'w').close()
     if args.wipe_csv:
         print_warn('wiping watchlist.csv contents')
         open(watchdata, 'w').close()
+    if args.remove_exchanges:
+        for arg in args.remove_exchange:
+            remove_exchange(arg)
+    if args.add_exchanges:
+        for arg in args.add_exchanges:
+            add_exchange(arg)
+    if args.available_exchanges:
+        for exchange in pull_exchanges():
+            print exchange
     # display local data
     # ------------------
     if args.exchanges:
