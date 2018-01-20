@@ -7,6 +7,7 @@ from core.strats.stats.standard_deviation import *
 from core.strats.stats.mean import *
 from core.strats.nlp import *
 
+from aux.generic import fetch_exchanges
 from aux.generic import fetch_watchlist
 from aux.generic import print_pass
 from aux.generic import print_fail
@@ -19,10 +20,9 @@ import csv
 # =============================================================================
 # assist functions
 # =============================================================================
-def exists_on_my_exchange(name):
-    # get list of exchange from extraced scrape of coin's available exchanges
+def exchanges_match(name):
     tradable = []
-    my_exchanges = open(exchanges).read()
+    my_exchanges = fetch_exchanges()
     for exchange in extract_exchanges(name):
         if exchange in my_exchanges:
             tradable.append(exchange)
@@ -48,8 +48,8 @@ def update():
     f = open(watchdata, 'a')
     date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     for crypto in fetch_watchlist():
-        price = float(Market().coin(crypto)[0]['price_usd'])  # * unicode bug
-        symbol = str(Market().coin(crypto)[0]['symbol'])  # * unicode bug
+        price = float(Market().coin(crypto)[0]['price_usd'])
+        symbol = str(Market().coin(crypto)[0]['symbol'])
         csv.writer(f).writerow([date, price, symbol])
         print_symbol = '{:8}'.format(symbol)
         print_price = '{:>4}'.format('$') + '{0:.2f}'.format(price)

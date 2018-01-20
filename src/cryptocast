@@ -148,7 +148,7 @@ def parse_logic():
         for arg in args.remove_exchange:
             remove_exchange(arg)
     if args.add_exchanges:
-        for arg in args.add_exchange:
+        for arg in args.add_exchanges:
             add_exchange(arg)
     if args.wipe:
         print_warn('wiping watchlist.txt contents')

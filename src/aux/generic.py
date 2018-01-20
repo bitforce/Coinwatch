@@ -33,8 +33,16 @@ def print_fail(string):
 
 
 def verified_exchange(name):
-    # yeah, how is this done --> pull from cmc all possible exchange names
-    return True
+    from bs4 import BeautifulSoup
+    import requests
+    url = 'https://coinmarketcap.com/exchanges/volume/24-hour/all/'
+    soup = BeautifulSoup(requests.get(url).text, 'lxml')
+    rows = soup.find('table', class_='table').find_all('tr')
+    for row in rows:
+        if row.has_attr('id'):
+            if name == row.text.strip()[3:]:
+                return True
+    return False
 
 
 def verified_coin(name):
@@ -44,7 +52,7 @@ def verified_coin(name):
     return True
 
 
-def fetch_exchanges():
+def fetch_exchanges():  # NOT SURE IF THIS IS RIGHT
     try:
         a = []
         for e in open(exchanges).read().split('\n')[:-1]:

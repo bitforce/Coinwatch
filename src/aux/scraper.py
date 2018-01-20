@@ -3,11 +3,11 @@ from bs4 import BeautifulSoup
 from generic import fetch_watchlist
 from generic import print_pass
 
-import requests
 import datetime
+import requests
 
 
-url = 'https://coinmarketcap.com/'
+url = 'https://coinmarketcap.com'
 
 
 # ------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ def scrape_market_caps(*args):
 
 def scrape_historical_data(coin):
     global url
-    url += 'currencies/' + coin + '/historical-data/?start=20130428&end=' + today()
+    url += '/currencies/' + coin + '/historical-data/?start=20130428&end=' + today()
     rows = scrape_rows(BeautifulSoup(requests.get(url).text, 'lxml'))
     cols = scrape_cols(BeautifulSoup(requests.get(url).text, 'lxml'))
     return [rows, cols]
