@@ -64,11 +64,14 @@ def update():
         symbol = str(Market().coin(crypto)[0]['symbol'])
         csv.writer(f).writerow([date, price, symbol])
         print_symbol = '{:8}'.format(symbol)
-        print_price = '{:>4}'.format('$') + '{:<10.2f}'.format(price)
+        if price > 10:
+            print_price = '{:>4}'.format('$') + '{:<10.2f}'.format(price)
+        else:
+            print_price = '{:>4}'.format('$') + '{:<10.3f}'.format(price)
         hour = hue(get_simple_percent_changes(crypto)[0])
         day = hue(get_simple_percent_changes(crypto)[1])
         week = hue(get_simple_percent_changes(crypto)[2])
-        percents = '|    {:18} {:<18} {}'.format(hour, day, week)
+        percents = '|    {:18} {:18} {}'.format(hour, day, week)
         if price < sell(symbol, price):
             print_fail_single_line(print_symbol + print_price)
             print percents
