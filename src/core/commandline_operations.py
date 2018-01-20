@@ -1,9 +1,12 @@
 from coinwrap import Market
 
+from aux.generic import verified_exchange
+from aux.generic import fetch_exchanges
 from aux.generic import fetch_watchlist
 from aux.generic import verified_coin
 from aux.generic import read_prices
 from aux.generic import print_warn
+from aux.generic import exchanges
 from aux.generic import watchlist
 
 
@@ -52,7 +55,13 @@ def remove_crypto(name):
 # rare args
 # ---------
 def add_exchange(name):
-    return
+    if verified_exchange(name):
+        if name in fetch_exchanges(name):
+            print_warn(name + ' is already being tracked')
+            return
+        with open(exchanges, 'a') as f:
+            f.write(name)
+            f.close()
 
 
 def remove_exchange(name):

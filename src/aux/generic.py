@@ -32,11 +32,27 @@ def print_fail(string):
     print RED + string + END
 
 
+def verified_exchange(name):
+    # yeah, how is this done --> pull from cmc all possible exchange names
+    return True
+
+
 def verified_coin(name):
     if type(Market().coin(name)) is not list:
         print_fail('{} : coin name non-existent or mispelled'.format(name))
         return False
     return True
+
+
+def fetch_exchanges():
+    try:
+        a = []
+        for e in open(exchanges).read().split('\n')[:-1]:
+            a.append(e.split()[:-1][0])
+        return a
+    except IOError:
+        print_fail('failed to open exchanges')
+        sys.exit(1)
 
 
 def fetch_watchlist():

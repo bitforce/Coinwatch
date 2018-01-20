@@ -53,7 +53,7 @@ def update():
         csv.writer(f).writerow([date, price, symbol])
         print_symbol = '{:8}'.format(symbol)
         print_price = '{:>4}'.format('$') + '{0:.2f}'.format(price)
-        if price < sell(symbol, print_price):
+        if price < sell(symbol, price):
             print_fail(print_symbol + print_price)
         elif price > buy(symbol, price):
             print_pass(print_symbol + print_price)
@@ -61,4 +61,6 @@ def update():
             print print_symbol + print_price
     f.write('\n')
     f.close()
+
     # maybe this can be optimized so you don't have to open the file every update
+    # also perhaps add how much price has changed in last hour
