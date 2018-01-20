@@ -158,11 +158,11 @@ def parse_logic():
         open(watchdata, 'w').close()
     # display local data
     # ------------------
-    if args.watchlist:
-        for name in open(watchlist):
+    if args.exchanges:
+        for name in open(exchanges):
             print name,
     if args.watchlist:
-        for name in open(exchanges):
+        for name in open(watchlist):
             print name,
     # display numerical data
     # ----------------------

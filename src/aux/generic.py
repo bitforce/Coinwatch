@@ -40,8 +40,11 @@ def verified_exchange(name):
     rows = soup.find('table', class_='table').find_all('tr')
     for row in rows:
         if row.has_attr('id'):
-            if name == row.text.strip()[3:]:
+            ex = row.text.strip().split('.')[1][1:].lower()
+            print ex
+            if name == ex:
                 return True
+    print_fail('{} : exchange non-existent or mispelled'.format(name))
     return False
 
 

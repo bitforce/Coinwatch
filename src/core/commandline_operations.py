@@ -55,13 +55,14 @@ def remove_crypto(name):
 # rare args
 # ---------
 def add_exchange(name):
-    if verified_exchange(name):
-        if name in fetch_exchanges(name):
-            print_warn(name + ' is already being tracked')
-            return
-        with open(exchanges, 'a') as f:
-            f.write(name)
-            f.close()
+    if not verified_exchange(name):
+        return
+    f = open(exchanges, 'a')
+    if name not in open(exchanges).read():
+        f.write(name + '\n')
+    else:
+        print_warn(name + ' already exists')
+    f.close()
 
 
 def remove_exchange(name):
