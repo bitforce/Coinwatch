@@ -4,6 +4,7 @@ Overview
 ---
 A cryptocurrency trend tracker that uses statistics to illuminate price-action 
 trends via statistical analysis and trade monitoring.
+![](./doc/img/coinwatch.png)
 
 Setup
 ---
@@ -15,7 +16,7 @@ cd Coinwatch/
 
 Usage
 ---
-see `cryptocast --help`
+see `coinwatch --help`
 
 Note
 ---
@@ -43,5 +44,5 @@ Version
 Author
 ---
 [LinkedIn](https://www.linkedin.com/in/brandonjohnsonxyz/)
-[Personal](https://brandonjohnson.life)
 [GitHub](https://github.com/bitforce)
+[Site](brandonjohnson.life)

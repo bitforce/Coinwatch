@@ -190,9 +190,10 @@ def parse_logic():
                 print_fail(arg + ' : no pricing data to be read')
                 continue
             print arg + ' : ' + str(get_high(arg))
+    # FIX THIS
     if args.standard_deviation:
         for arg in args.standard_deviation:
-            if not verified_coin(arg):
+            if not verified_coin(arg):  # WHY?
                 return
             print get_standard_deviation(arg)
     if args.simple_percent_changes:

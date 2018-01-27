@@ -12,6 +12,7 @@ from aux.generic import fetch_watchlist
 from aux.generic import print_pass_single_line
 from aux.generic import print_fail_single_line
 from aux.generic import print_bold
+from aux.generic import YELLOW
 from aux.generic import GREEN
 from aux.generic import RED
 from aux.generic import END
@@ -37,7 +38,7 @@ def hue(percent):
         return GREEN + str(percent) + '%' + END
     if float(percent) < 0:
         return RED + str(percent) + '%' + END
-    return str(percent) + '%'
+    return YELLOW + str(percent) + '%' + END
 
 
 # =============================================================================
