@@ -3,7 +3,10 @@
 Overview
 ---
 A cryptocurrency trend tracker that uses statistics to illuminate price-action 
-trends via statistical analysis and trade monitoring.
+trends via statistical analysis and trade monitoring. It pulls from both low-
+latency and real-time data feeds; amalgamating the input into useful points 
+of information. Plans to incorporate more advanced statistical analysis 
+techniques are noted in the empty `py` files.
 
 <div align='center'>
   <img src='./doc/img/coinwatch.png' width='80%' height='50%'\>
