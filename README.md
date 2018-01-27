@@ -4,7 +4,8 @@ Overview
 ---
 A cryptocurrency trend tracker that uses statistics to illuminate price-action 
 trends via statistical analysis and trade monitoring.
-![](./doc/img/coinwatch.png)
+
+![](./doc/img/coinwatch.png =300x300)
 
 Setup
 ---
