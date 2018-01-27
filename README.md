@@ -48,4 +48,4 @@ Author
 ---
 [LinkedIn](https://www.linkedin.com/in/brandonjohnsonxyz/)
 [GitHub](https://github.com/bitforce)
-[Site](brandonjohnson.life)
+[Site](http://brandonjohnson.life)
