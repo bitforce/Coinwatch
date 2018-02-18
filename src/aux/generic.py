@@ -10,10 +10,11 @@ WHITE = '\033[1m'
 RED = '\033[91m'
 END = '\033[0m'
 
-backfills = '.watch/backfill.csv'
-exchanges = '.watch/exchanges.txt'
-watchlist = '.watch/watchlist.txt'
-watchdata = '.watch/watchlist.csv'
+exchanges = 'out/watch/exchanges.txt'
+watchlist = 'out/watch/watchlist.txt'
+watchdata = 'out/watch/watchlist.csv'
+backfills = 'out/watch/backfill.csv'
+tracker = 'out/tracker.txt'
 
 
 def print_bold(string):
