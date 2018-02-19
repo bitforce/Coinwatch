@@ -1,4 +1,6 @@
 from generic import print_warn
+from generic import print_fail
+from generic import print_pass
 from generic import tracker
 
 from bs4 import BeautifulSoup
@@ -11,47 +13,53 @@ import os.path
 
 soup = BeautifulSoup(requests.get('https://coinmarketcap.com').text, 'lxml')
 symbols = soup.select('.circulating-supply a span.hidden-xs')
-change = soup.find_all(class_='percent-change')
+percents = soup.find_all(class_='percent-change')
 
 cycle = 0
 load = []
 
 
-def mov(i, sym):
-    # here what we want to get is the past keys using the old vals[0], 
-    # so by finding the symbol, we know what the past % was -- we get 
-    # the current % by passing through the data
-    print load[i].items()[0][1][0]
-
-    shift = int(load[i][load[i].keys()[0]][1])
-    #print str(shift) + " " + load[i][load[i].keys()[0]][0]
-    if float(load[i].keys()[0]) < percent:
-        shift += 1
-    if float(load[i].keys()[0]) > percent:
-        shift -= 1
+def mov(i, sym, per):
+    shift = 0
+    for j in load:
+        if sym == j.keys()[0]:
+            shift = j[sym][1]
+            if float(j[sym][0]) < float(per):
+                shift += 1
+                print_pass(sym + " " + str(shift) + " UP")
+            if float(j[sym][0]) > float(per):
+                print_fail(sym + " " + str(shift) + " DOWN")
+                shift -= 1
+            break
     return shift
 
 
 def track(empty):
     data = []
     sym = ''
+    num = 0
     if empty:
         for i in range(100):
             sym = symbols[i].text
-            data.append({float(change[i].text[:-1]):sym, sym:0})
+            per = percents[i].text[:-1]
+            data.append({sym:[per, 0]})
     else:
         for i in range(100):
             sym = symbols[i].text
-            data.append({float(change[i].text[:-1]):sym, sym:mov(i, sym)]})
+            per = percents[iPOINTS ].text[:-1]
+            data.append({sym:[per, mov(i, sym, per)]})
+    order(data)
     fout = open(tracker, 'w')
-    #fout.write(str(cycle+1))
-    fout.write(json.dumps(sorted(data, reverse=True)))
+    fout.write(json.dumps(data))
     fout.close()
+
+
+def order():  # finds fastest growing coins-->invest in these
+    return
 
 
 def init():
     if os.path.isfile(tracker) and os.stat(tracker).st_size != 0:
-        #cycle = int([x for x in open(tracker, 'r')][0][0])
         with open(tracker, 'r') as f:
             global load
             load = json.load(f)
@@ -61,9 +69,6 @@ def init():
         print_warn('no tracker data; initializing first cycle...')
         track(True)
 
-# what I essentially want to see are a list of symbols highlighted 
-# green, red, or default indicating that the trailing is working, 
-# perhaps, what I'll do is just place a + or - sign next to my 
-# portfolio coins when their ROC is significantly moving in 
-# some direction
+# KEEP TRACK OF HOW MANY TIMES IT'S RAN OUTSIDE THE FILE
+
 init()
