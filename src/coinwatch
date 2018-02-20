@@ -1,10 +1,13 @@
-#!/usr/local/bin/python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from core.commandline_operations import *
 from core.critical_operations import backfill
 from core.final_strategy import update
+from aux.tracker import track
 from aux.generic import *
+
+from multiprocessing import Process
 
 import argparse
 import datetime
@@ -23,7 +26,7 @@ args = None
 # =============================================================================
 # assist functions
 # =============================================================================
-def define_commandline_arguments():  # EVENTUALLY UPDATE TO ADD SUBPARSERS AND POS ARGS
+def define_commandline_arguments():
     parser = argparse.ArgumentParser('cryptocast')
     # subparser = parser.add_subparsers()
     parser.add_argument('--start',
@@ -107,7 +110,7 @@ def file_exists(f, msg):
         open(f, 'w').close()
 
 
-def dir_exists(d, msg):  # doesn't need to exist, but I do it for clean-code style
+def dir_exists(d, msg):
     if not os.path.isdir(d):
         print_bold(msg)
         os.makedirs(d)
@@ -117,7 +120,7 @@ def dir_exists(d, msg):  # doesn't need to exist, but I do it for clean-code sty
 # main functions
 # =============================================================================
 def validate_environment():
-    dir_exists('.watch', 'no watch directory found; creating one now')
+    dir_exists('out', 'no output directory found; creating one now')
     file_exists(watchlist, 'no watchlist.txt found; creating one now')
     file_exists(watchdata, 'no watchlist.csv found; creating one now')
     file_exists(exchanges, 'no exchanges.txt found, creating one now')
@@ -214,7 +217,7 @@ def parse_logic():
             print
 
 
-def init():
+def start():
     backfill()
     if not start:
         sys.exit()
@@ -229,6 +232,16 @@ def init():
         update()
         print '\n...\n'
         time.sleep(args.delay)
+
+
+def init():
+    p1 = Process(target=start)
+    p2 = Process(target=track)
+    p1.start()
+    p2.start()
+    p1.join()
+    p2.join()
+
 
 
 def run():

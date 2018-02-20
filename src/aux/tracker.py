@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 
 import requests
 import json
+import time
 
 import os.path
 
@@ -17,6 +18,7 @@ percents = soup.find_all(class_='percent-change')
 
 cycle = 0
 load = []
+ordered = []
 
 
 def mov(i, sym, per):
@@ -34,7 +36,11 @@ def mov(i, sym, per):
     return shift
 
 
-def track(empty):
+def order(data):
+    return data
+
+
+def munge(empty):
     data = []
     sym = ''
     num = 0
@@ -46,29 +52,25 @@ def track(empty):
     else:
         for i in range(100):
             sym = symbols[i].text
-            per = percents[iPOINTS ].text[:-1]
+            per = percents[i].text[:-1]
             data.append({sym:[per, mov(i, sym, per)]})
-    order(data)
     fout = open(tracker, 'w')
-    fout.write(json.dumps(data))
+    fout.write(json.dumps(order(data)))
     fout.close()
 
 
-def order():  # finds fastest growing coins-->invest in these
-    return
-
-
-def init():
+def track():
     if os.path.isfile(tracker) and os.stat(tracker).st_size != 0:
-        with open(tracker, 'r') as f:
-            global load
-            load = json.load(f)
-            f.close()
-        track(False)
+        i = 1
+        while(i < 1000):
+            print 'tracker cycle ' + str(i)
+            with open(tracker, 'r') as f:
+                global load
+                load = json.load(f)
+                f.close()
+            munge(False)
+            time.sleep(360)
+            i += 1
     else:
         print_warn('no tracker data; initializing first cycle...')
-        track(True)
-
-# KEEP TRACK OF HOW MANY TIMES IT'S RAN OUTSIDE THE FILE
-
-init()
+        munge(True)

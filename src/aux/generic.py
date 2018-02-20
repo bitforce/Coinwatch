@@ -10,10 +10,10 @@ WHITE = '\033[1m'
 RED = '\033[91m'
 END = '\033[0m'
 
-exchanges = 'out/watch/exchanges.txt'
-watchlist = 'out/watch/watchlist.txt'
-watchdata = 'out/watch/watchlist.csv'
-backfills = 'out/watch/backfill.csv'
+exchanges = 'out/exchanges.txt'
+watchlist = 'out/watchlist.txt'
+watchdata = 'out/watchlist.csv'
+backfills = 'out/backfill.csv'
 tracker = 'out/tracker.txt'
 
 
