@@ -217,7 +217,7 @@ def parse_logic():
             print
 
 
-def start():
+def alpha():
     backfill()
     if not start:
         sys.exit()
@@ -228,14 +228,14 @@ def start():
     while cycles > 0:
         cycles -= 1
         print 'CYCLE ' + str((cycles - args.cycles) * -1)
-        print '-----'
+        print '-----'tart
         update()
         print '\n...\n'
         time.sleep(args.delay)
 
 
 def init():
-    p1 = Process(target=start)
+    p1 = Process(target=alpha)
     p2 = Process(target=track)
     p1.start()
     p2.start()
