@@ -10,6 +10,14 @@ techniques are noted in the empty py files.
 
 <div align='center'><img src='./doc/img/coinwatch.png'\></div>
 
+
+Update
+---
+### 02/19 | Multiprocessing
+
+In addition to a side-tracker, multiprocessing was utilized to manage handling 
+different data pools.
+
 Setup
 ---
 ```
